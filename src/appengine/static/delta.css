@@ -1,0 +1,179 @@
+body, div {
+  max-width: 100%;
+}
+
+div {
+  padding: 0;
+  margin: 0;
+}
+
+span#returnLink {
+  font-size: 1.2em;
+}
+
+#pixelDetail {
+  height: 64px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 8px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+#pixelDetail .test {
+  color: #35C;
+}
+
+#pixelDetail .ref {
+  color: #00A000;
+}
+
+/* These are recommended styles for the default splitpane */
+.goog-splitpane {
+  height: 200px;
+  width: 300px;
+  padding: 0;
+  margin: 0;
+  clear: left;
+}
+
+.goog-splitpane-handle {
+  border-left: 0px solid gray;
+  border-right: 0px solid gray;
+  background: #fff;
+  position: absolute;
+}
+
+.goog-splitpane-handle-horizontal {
+  cursor: col-resize;
+}
+
+.goog-splitpane-handle-vertical {
+  cursor: row-resize;
+}
+
+.goog-splitpane-first-container,
+.goog-splitpane-second-container {
+  border: 3px solid #C3D9FF;
+  background: #C3D9FF;
+  overflow: hidden;
+  position: absolute;
+}
+
+.goog-splitpane-second-container {
+  border: 3px solid #A9DA92;
+  background: #A9DA92;
+}
+
+#testBrowserName, #refBrowserName {
+  padding: 3px 5px;
+  font-weight: bold;
+}
+
+#testBrowserName {
+  float: left;
+  background: #C3D9FF;
+}
+
+#refBrowserName {
+  float: right;
+  background: #A9DA92;
+}
+
+.data, .canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.canvas {
+  z-index:99;
+}
+
+.fixed {
+  margin: 0;
+  padding: 0;
+  display: block;
+  position:absolute;
+  top:0;
+  left:0;
+}
+
+#progressPane {
+  width: 200px;
+  height: 40px;
+  margin: 0;
+  padding: 5px;
+  background: #ffffff;
+  border: 1px solid #cccccc;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index:990;
+}
+
+.progress-bar-vertical,.progress-bar-horizontal {
+  position: relative;
+  border: 1px solid #949dad;
+  background: white;
+  padding: 1px;
+  overflow: hidden;
+  margin: 3px 0 0;
+}
+
+.progress-bar-horizontal {
+  width: 180px;
+  height: 14px;
+}
+
+.progress-bar-vertical {
+  width: 14px;
+  height: 200px;
+}
+
+.progress-bar-thumb {
+  position: relative;
+  background: #d4e4ff;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+table.deltavaluetable {
+ 
+  border-collapse:collapse;
+  vertical-align:top;
+
+}
+table.deltavaluetable td, table.deltavaluetable th {
+  font-size:1.0em;
+  border:3px groove #98bf21;
+  padding:3px 7px 2px 7px;
+}
+
+table.deltavaluetable td{
+white-space: nowrap;
+}
+table.deltavaluetable .labels {
+  font-size:1.1em;
+  text-align:left;
+  padding-top:5px;
+  padding-bottom:4px;
+  font-weight: bold;
+  background-color:#A7C942;
+}
+table.deltavaluetable .values{
+  padding-top:5px;
+  text-align: left;
+}
+table.deltavaluetable  tr.alt td {
+  color:#000000;
+  background-color:#EAF2D3;
+}
+
+table.deltavaluetable tr:hover {
+  background-color:#ffffcc;
+}

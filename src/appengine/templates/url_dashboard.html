@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>QualityBots Url Dashboard</title>
+  <link rel="stylesheet" href="/s/url_dashboard.css" type="text/css" />
+  <link rel="stylesheet" href="/s/url_popup.css" type="text/css" />
+  <script type="text/javascript" src="/js/url_dashboard_script.js"></script>
+</head>
+<body>
+  <div class="headerContainer">
+    <img src="/s/qualitybotslogo.png" class="headerLogo"
+         alt="QualityBots" />
+    <div class="headerButton overviewButton">Overview</div>
+    <div class="headerButton runsButton">Runs</div>
+    <div class="headerButton resultsButtonSelected">Results</div>
+    <div class="userWelcome">{{email}}'s QualityBots Tests</div>
+    <div class="dashboardDivider"></div>
+  </div>
+
+  <div class="statusPaneContainer">
+  <div class="nextRunTitle">Next Run</div>
+  <div class="countdown" id="nextRunCountdown">--:--:--:--</div>
+  <!-- Currently mocked, we need to update this real data later -->
+  <div class="nextRunDate">Sept 26, 2011 8:00pm EST</div>
+  <div class="alertsTitle">Alerts</div>
+  <div class="alertsUsername">+ {{email}}</div>
+</div>
+
+<div id="layoutLegendContainer" class="legendContainer">
+  <div class="legendTitle">Layout Score Legend</div>
+  <img class="excellentIcon"
+       src="/s/rating-excellent.png" alt="Exact Match Icon" />
+  <div class="excellentTitle">exact</div>
+  <div class="greatSeparator"></div>
+  <img class="greatIcon"
+       src="/s/rating-great.png" alt="Great Match Icon" />
+  <div class="greatTitle">99</div>
+  <div class="goodSeparator"></div>
+  <img class="goodIcon"
+       src="/s/rating-good.png" alt="Good Match Icon" />
+  <div class="goodTitle">98-90</div>
+  <div class="fairSeparator"></div>
+  <img class="fairIcon"
+       src="/s/rating-fair.png" alt="Fair Match Icon" />
+  <div class="fairTitle">89-50</div>
+  <div class="poorSeparator"></div>
+  <img class="poorIcon"
+       src="/s/rating-poor.png"  alt="Good Match Icon" />
+  <div class="poorTitle">49-0</div>
+  <div class="noDataSeparator"></div>
+  <img class="noDataIcon"
+       src="/s/rating-nodata.png"  alt="No Data Icon" />
+  <div class="noDataTitle">No Data</div>
+</div>
+
+<div class="resultsTitle">Results for
+  <span class="runName">Latest Run</span>
+</div>
+
+
+<div class="resultsContainer">
+  <div class="comparisonTitle">Chrome Channels</div>
+
+    <div class="baselineHeader"
+         title="Chrome Release Channel">Rel</div>
+  <div id="browserChannelContainer" class="browserColumnContainer">
+    <span class="urlHeader">URL</span>
+  </div>
+  <div class="comparisonContainer">
+    <div class="comparisonBorder" id="comparisonBorder">
+      <div id="resultsBorder" class="baselineColumn">
+        <div id="baselineText" class="baselineText">
+           B A S E L I N E
+        </div>
+        <div id="noDataText" class="comparisonNoData">
+          No Data Available
+        </div>
+      </div>
+    </div>
+    <div class="scoresContainer">
+     <!-- Intentionally blank, has data progegated to it. -->
+     <div id="urlList"></div>
+     <div class="inputContainer">
+       <input id="urlInput" type="text" value="http://..." class="urlInput" />
+     </div>
+     <div class="addUrlContainer">
+       <span id="urlSubmit" class="addUrlLink">+ Add another URL</span>
+     </div>
+    </div>
+  </div>
+  <div class="notificationContainer">
+    <div class="notificationMessage">
+      QualityBots tests compares the layout of web pages across multiple
+      browser versions.
+    </div>
+    <div class="notificationClose">
+      X
+    </div>
+  </div>
+</div>
+</body>
+</html>

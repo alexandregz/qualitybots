@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>QualityBots - Suite Details</title>
+    <link rel="stylesheet" href="http://www.google.com/css/go.css"
+          type="text/css" />
+    <link rel="stylesheet" href="/s/qualitybots.css" type="text/css" />
+    <link rel="stylesheet" href="/s/mytable.css" type="text/css" />
+    <link rel="stylesheet" href="/s/status.css" type="text/css" />
+    <script type="text/javascript" src="/js/suitedetails_script.js"></script>
+    <script type="text/javascript">
+      var sd = new appcompat.SuiteDetails();
+    </script>
+  </head>
+
+  <body>
+    <h1>
+      <a href="/">
+        <img src="/s/qualitybotslogo.png" alt="QualityBots"
+             width="142" height="54"></a>
+      <div id="suite_details_status"></div>
+      Suite: {{suite.date|date:"D d M,Y h:i:s A" }}
+    </h1>
+
+    <ul id="nav">
+      <li>Views
+        <ul>
+          <li><a href="/suite/list" class="option">Suite List</a></li>
+        </ul>
+      </li>
+      <li>Current Suite
+        <ul>
+          <li>
+            <a id="current_suite_details"
+               href="/suite/details?suite={{ suite.key }}"
+               class="option selected">Results</a>
+          </li>
+          <li>
+            <a href="/suite/compare?suite={{ suite.key }}"
+               class="option">Compare</a>
+          </li>
+          <li>
+            <a href="/suite/stats?suite={{ suite.key }}"
+               class="option">Score Stats</a>
+          </li>
+        </ul>
+      </li>
+      <li>Latest Suite
+        <ul>
+          <li>
+            <a id="latest_suite_pass" href="/pass" class="option">Pass</a>
+          </li>
+          <li>
+            <a id="latest_suite_fail" href="/fail" class="option">Fail</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <div id="aux">
+      <ul>
+        <li>Number of URLs: ~{{suite.GetNumSites}}</li>
+        <li>Reference browser: {{ref_browser}}</li>
+        <li>Test browsers: {{test_browsers}}</li>
+        <li>Data received: {{ data_count }}</li>
+        <li>Result computed: {{ delta_count }}</li>
+      </ul>
+      <p>{{ suite.description }}</p>
+
+      <table class="container">
+        <tr>
+          <td class="toolbar">
+            <div class="rightLinks">Sort:
+              <a href="{{ url }}&order=-date">Latest</a> |
+              <a href="{{ url }}&order=-score">Score High -&gt; Low</a> |
+              <a href="{{ url }}&order=score">Score Low -&gt; High </a>
+            </div>
+            <div class="paging">
+              {% if prev %}
+              <a href="{{ url }}&offset={{ prev }}&limit={{ limit }}&order={{ order }}">
+                &lt; Prev {{ limit }}
+              </a>
+              {% endif %}
+              &nbsp;{{ start }} - {{ end }}&nbsp;
+              {% if next %}
+              <a href="{{ url }}&offset={{ next }}&limit={{ limit }}&order={{ order }}">
+                Next {{ limit }} &gt;
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="info">
+            <table class="appcompat" cellpadding="0" cellspacing="0"
+                   border="0" summary="Results Table">
+              <thead>
+                <tr class="mainTasksHeader">
+                  <th>
+                    <input type="checkbox"
+                           onClick="sd.selectAll('result', this.checked)" />
+                  </th>
+                  <th>Test Browser</th>
+                  <th>Ref Browser</th>
+                  <th>Url</th>
+                  <th>Score</th>
+                  <th>Date</th>
+                  <th>Comments</th>
+                  <th>Bugs</th>
+                  <th>Ignore Test</th>
+                  {% if is_admin %}
+                  <th width='25px'> </th>
+                  {% endif %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for entry in deltas %}
+                <tr class={% cycle "odd" "even" %}>
+                  <td>
+                    <input type="checkbox" name="result"
+                           value="{{ entry.key }}" />
+                  </td>
+                  <td>
+                    <a href="/delta/show?key={{ entry.key }}&type=test"
+                       target="_blank">
+                      {{ entry.GetTestBrowser.GetBrowserStringWithFlag }}
+                    </a>
+                    <sup
+                      {% if entry.GetTestPrerenderTag == prerendered_string %}
+                          style="color:green"
+                      {% else %}
+                          style="color:red"
+                      {% endif %}>
+                      {{ entry.GetTestPrerenderTag }}
+                    </sup>
+                  </td>
+                  <td>
+                    <a href="/delta/show?key={{ entry.key }}&type=ref"
+                       target="_blank">
+                      {{ entry.GetRefBrowser.GetBrowserStringWithFlag }}
+                    </a>
+                    <sup
+                      {% if entry.GetRefPrerenderTag == prerendered_string %}
+                         style="color:green"
+                      {% else %}
+                         style="color:red"
+                      {% endif %}>
+                      {{ entry.GetRefPrerenderTag }}
+                    </sup>
+                  </td>
+                  <td>
+                    <a href="{{ entry.test_data.site.url }}"
+                       target="_blank">{{ entry.GetSiteUrl }}</a>
+                  </td>
+                  <td class="rightAlign">
+                    <b>{{ entry.score|StringToFloat4 }}</b>
+                    {% if not entry.Completed %}
+                    <br/>
+                    <a href="/compute_delta?delta={{ entry.key }}">Retry</a>
+                    {% endif %}
+                  </td>
+                  <td>{{ entry.date|date:"D d M,Y h:i:s A T" }}</td>
+                  <td>
+                    <textarea name="comments" class="comments"
+                              onclick="sd.addSaveButton(this)"
+                              onchange="sd.disableOnBlur(this)"
+                              onblur="sd.removeSaveButton(this)">{{ entry.comments }}</textarea>
+                    <br/>
+                  </td>
+                  <td>
+                    <textarea name="bugs" class="bugs"
+                              onclick="sd.addSaveButton(this)"
+                              onchange="sd.disableOnBlur(this)">
+                      {% for b in entry.bugs %}
+                      {{ b }}
+                      {% endfor %}
+                    </textarea>
+                    <br/>
+                  </td>
+                  <td><input type="checkbox" name="ignore" class="ignore"
+                  onchange="sd.saveIgnore(this)" {% if entry.ignore %}checked="checked"{% endif %}/>
+                  </td>
+                  {% if is_admin %}
+                  <td>
+                    <a href="/delete?key={{ entry.key }}&lastUrl={{ url }}&offset={{ start }}&limit={{ limit }}&order={{ order }}">
+                      Delete
+                    </a>
+                  </td>
+                  {% endif %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="footer">
+      <br/>&copy; 2010 Google.
+    </div>
+
+  </body>
+</html>

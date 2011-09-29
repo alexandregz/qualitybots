@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>QualityBots - Test Suites</title>
+  <link rel="stylesheet" href="http://www.google.com/css/go.css"
+        type="text/css"/>
+  <link rel="stylesheet" href="/s/qualitybots.css" type="text/css"/>
+  <link rel="stylesheet" href="/s/mytable.css" type="text/css"/>
+  <script type="text/javascript">
+    function selectAll(name, selected) {
+      var inputs = document.getElementsByName(name);
+      for (var i = 0, node; node = inputs[i]; i++) {
+        node.checked = selected;
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>
+    <a href="/">
+      <img src="/s/qualitybotslogo.png" alt="QualityBots" width="142"
+           height="54">
+    </a>Suite List&nbsp;
+  </h1>
+  <ul id="nav">
+    <li>Views
+      <ul>
+        <li><a href="/suite/list" class="option selected">Suite List</a></li>
+      </ul>
+    </li>
+    <li>Latest Suite
+      <ul>
+        <li>
+          <a href="/suite/details?suite=latest" class="option">
+          Details
+          </a>
+        </li>
+        <li>
+          <a href="/pass" class="option">
+          Pass
+          </a>
+        </li>
+        <li>
+          <a href="/fail" class="option">
+          Fail
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+  <div id="aux">
+    <form action="/stats/multi">
+      <table class="container">
+        <tr>
+          <td class="info">
+            <table class="appcompat" cellpadding="0" cellspacing="0"
+                   border="0" summary="Suite List Table">
+              <thead>
+                <tr class="mainTasksHeader">
+                  <th>
+                    <input type="checkbox"
+                           onClick="selectAll('suite', this.checked)" />
+                  </th>
+                  <th>Date</th>
+                  <th># Urls</th>
+                  <th>Test Browsers</th>
+                  <th>Ref Browser</th>
+                  <th>Note</th>
+                  {% if is_admin %}
+                  <th style="width:25px"> </th>
+                  {% endif %}
+                </tr>
+              </thead>
+              <tbody>
+              {% for suite in suites %}
+                <tr class={% cycle "odd" "even" %}>
+                  <td>
+                    <input type="checkbox" name="suite"
+                           value="{{ suite.key }}" />
+                  </td>
+                  <td>
+                    <a href="/suite/details?suite={{ suite.key }}">
+                      {{ suite.date }}
+                    </a>
+                  </td>
+                  <td>~{{ suite.GetNumSites }}</td>
+                  <td>{{ suite.GetTestBrowsersStringWithFlag }}</td>
+                  <td>{{ suite.ref_browser.GetBrowserStringWithFlag }}</td>
+                  <td>{{ suite.description }}</td>
+                  {% if is_admin %}
+                  <td>
+                    <a href="/delete?key={{ suite.key }}&lastUrl=/suite/list">
+                      Delete
+                    </a>
+                  </td>
+                  {% endif %}
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button>Get Average Score</button> &nbsp; &nbsp;
+            <button>Delete</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+  <div class="footer">
+    <br/>&copy; 2010 Google.
+  </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+/**
+ * Copyright 2011 Google Inc. All Rights Reserved.
+ *
+ * @fileoverview Style definitions for the information popup when adding URLs.
+ *
+ */
+
+
+div.popupContainerArrow {
+  position: absolute;
+  top: -18px;
+  left: 260px;
+  width: 0;
+  height: 0;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent #fff transparent;
+}
+
+div.popupContainerArrowBase {
+  position: absolute;
+  top: -20px;
+  left: 260px;
+  width: 0;
+  height: 0;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent rgba(0,0,0,0.2) transparent;
+}
+
+span.popupTitle {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  text-align: center;
+  font-size: 16px;
+}
+
+div.infoPopupContainer {
+  width: 359px;
+  height: 49px;
+  background-color: #fff;
+  outline: 1px solid rgba(0,0,0,0.2);
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px; border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 999999;
+  position: absolute;
+}
+
+div.urlPopupContainer {
+  position: absolute;
+  background-color: #fff;
+  outline: 1px solid rgba(0,0,0,0.2);
+  -webkit-border-radius: 2px; -moz-border-radius: 2px;
+  border-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  width: 407px;
+  z-index: 999999;
+}
+
+span.urlPopupSelectionLink {
+  position: absolute;
+  left: 21px;
+  text-align: center;
+  color: #025CCA;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+span.sharedLabel {
+  background-color: #127CDA;
+  color: #fff;
+  margin-left: 5px;
+  font-size: 10pt;
+  padding: 0px 3px 2px 3px;
+  border-radius: 3px;
+  font-weight: bold;
+}

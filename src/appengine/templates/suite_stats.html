@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <title>QualityBots - Suite Details</title>
+    <link rel="stylesheet" href="http://www.google.com/css/go.css"
+          type="text/css" />
+    <link rel="stylesheet" href="/s/qualitybots.css" type="text/css" />
+    <link rel="stylesheet" href="/s/mytable.css" type="text/css" />
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+    var browser_scores = {{ browser_scores|safe }};
+    </script>
+    <script type="text/javascript" src="/js/suite_stats_script.js"></script>
+  </head>
+
+  <body>
+    <h1>
+      <a href="/">
+        <img src="/s/qualitybotslogo.png" alt="QualityBots"
+             width="142" height="54">
+      </a>
+      {% if suite %}
+      Suite: {{suite.date}}
+      {% else %}
+      Average Scores
+      {% endif %}
+    </h1>
+
+    <ul id="nav">
+      <li>Views
+        <ul>
+          <li><a href="/suite/list" class="option">Suite List</a></li>
+        </ul>
+      </li>
+      {% if suite %}
+      <li>Current Suite
+        <ul>
+          <li>
+            <a href="/suite/details?suite={{ suite.key }}" class="option">
+              Results
+            </a>
+          </li>
+          <li>
+            <a href="/suite/compare?suite={{ suite.key }}" class="option">
+              Compare</a>
+          </li>
+          <li>
+            <a href="/suite/stats?suite={{ suite.key }}"
+               class="option selected">Score Stats
+            </a>
+          </li>
+        </ul>
+      </li>
+      {% endif %}
+    </ul>
+
+    <div id="aux">
+      <ul>
+        <li>
+        Reference browser: {{ suite.ref_browser.GetBrowserStringWithFlag }}
+        </li>
+        <li>
+        Test browsers: {{ suite.GetTestBrowsersStringWithFlag }}
+        </li>
+      </ul>
+
+      <div id="chart_div"></div>
+      {% if suite %}
+      <a href="/stats/average?suite={{ suite.key }}">Update Graph</a>
+      {% endif %}
+    </div>
+
+    <div class="footer">
+      <br/>&copy; 2010 Google.
+    </div>
+
+  </body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Prerender Test Page</title>
+  <script type="text/javascript" src="/js/prerender_script.js"></script>
+</head>
+<body>
+  <table border="1">
+    <tr>
+      <th>URL</th>
+      <th>Prerendered</th>
+    </tr>
+    <tr>
+      <td>
+        <a href= "{{ url }}">{{ url }}</a>
+        <link id="prerender" rel="prerender" href="{{ url }}"/>
+      </td>
+      <td>
+        <img id="fail" style="display:none" src="/s/fail.png" alt="Fail" height="20">
+        <img id="pass" style="display:none" src="/s/pass.png" alt="Success" height="20">
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

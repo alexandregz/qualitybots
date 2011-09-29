@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ test_browser|UnicodeString }} vs
+           {{ ref_browser|UnicodeString }} {{ site_url }}</title>
+    <link rel="stylesheet" href="/s/delta.css" type="text/css" />
+    <script type="text/javascript" src="/js/drawdelta_script.js"></script>
+    <script type="text/javascript">
+      var resultKey = '{{ delta.key }}';
+      var layoutScore = {{ delta.score|StringToFloat4 }};
+
+      var layoutDeltaUI = new appcompat.webdiff.LayoutDeltaUI(
+          resultKey, layoutScore);
+
+      var renderDeltaOverlays = function() {
+        var refImage = document.getElementById('refBrowserScreenshot');
+        var width = refImage.width;
+        var height = refImage.height;
+
+        layoutDeltaUI.renderData(width, height);
+      };
+
+      var sd = new appcompat.SuiteDetails();
+    </script>
+  </head>
+
+  <body>
+    <table width="100%" style="margin-top:1em">
+      <tbody>
+        <tr valign="top">
+          <td style="float:left;border-right:1" width="185">
+            <a href="/"><img src="/s/qualitybotslogo.png"
+                             alt="QualityBots" width="142" height="54"></a>
+          </td>
+          <td style="float:left;">
+            <table class="deltavaluetable">
+              <tbody valign="top">
+                <tr>
+                  <td class="labels">Site URL: </td>
+                  <td class="values">
+                    <a href="{{ site_url }}">{{ site_url }}</a>
+                  </td>
+                  <td class="labels"
+                      title="Percent Similar (Pixels at DOM Level)">
+                    Layout Score: </td>
+                  <td class="values">{{ delta.score|StringToFloat4 }}</td>
+                  <td class="labels" rowspan="2">Comments: </td>
+                  <td class="values" rowspan="2">
+                    <input type="hidden" name="result"
+                           value="{{ delta.key }}" />
+                    <textarea name="comments" class="comments"
+                              onclick="sd.addSaveButton(this)"
+                              onchange="sd.disableOnBlur(this)"
+                              onblur="sd.removeSaveButton(this)">{{ delta.comments }}</textarea><br/>
+                  </td>
+                  <td class="labels" rowspan="2">
+                    Ignore:
+                  </td>
+                  <td class="values" rowspan="2">
+                    <input type="checkbox" name="ignore" class="ignore"
+                           onchange="sd.saveIgnore(this)"
+                           {% if entry.ignore %}checked="checked"{% endif %}/>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="labels" title="Time Difference Between two runs">
+                    Time Difference: </td>
+                  <td class="values">{{ time_diff }}</td>
+                  <td class="labels"
+                      title="Indicates Possible Synchronization related Issue">
+                    Possible Sync Issue: </td>
+                  <td class="values">
+                    {% if possible_sync_issue_flag %}
+                    Yes
+                    {% else %}
+                    No
+                    {% endif %}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <span id="returnLink">
+      <a href="/suite/details?suite={{ delta.test_suite.key }}">
+        Return to Results</a>
+    </span>
+    <br/>
+    <div>
+      <div id="testBrowserName">{{ test_browser|UnicodeString }}
+      {% if test_prerender_tag %}
+        &ndash; <span {% if test_prerender_tag == prerendered_string %}
+                        style="color:green"
+                      {% else %}
+                        style="color:red"
+                      {% endif %}
+                      >{{ test_prerender_tag }}</span>
+      {% endif %}
+      </div>
+      <div id="refBrowserName">
+        {{ ref_browser|UnicodeString }}
+      {% if ref_prerender_tag %}
+        &ndash; <span {% if ref_prerender_tag == prerendered_string %}
+                        style="color:green"
+                      {% else %}
+                        style="color:red"
+                      {% endif %}>{{ ref_prerender_tag }}</span>
+      {% endif %}
+      </div>
+    </div>
+    <div class="goog-splitpane" id="dataFrames">
+      <div class="goog-splitpane-first-container" id="testFrame">
+        <div class="data" id="testData">
+          <img alt="TestSnapshot" id="testBrowserScreenshot"
+               src="/screenshot?key={{ test_data.screenshot.key }}" />
+        </div>
+      </div>
+      <div class="goog-splitpane-second-container" id="refFrame">
+        <div class="data" id="refData">
+          <img alt="RefSnapshot" id="refBrowserScreenshot"
+               src="/screenshot?key={{ ref_data.screenshot.key }}"
+               onLoad="renderDeltaOverlays()" />
+        </div>
+      </div>
+      <div class="goog-splitpane-handle"></div>
+    </div>
+    <div id="pixelDetail">
+      <span id="pixelCoords" class="bold"></span><br />
+      <span class="bold test">{{ test_browser|UnicodeString }}:&nbsp; </span>
+      <span id="testElementInfo" class="test"></span><br />
+      <span class="bold ref">{{ ref_browser|UnicodeString }}:&nbsp; </span>
+      <span id="refElementInfo" class="ref"></span>
+    </div>
+    <script type="text/javascript">
+      layoutDeltaUI.createUI();
+      layoutDeltaUI.retrieveData('{{ delta_index }}',
+                                 '{{ dynamic_content_index }}');
+    </script>
+  </body>
+</html>

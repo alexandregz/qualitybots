@@ -1,0 +1,16 @@
+DIV.status {
+  vertical-align:middle;
+  display:inline;
+  background-color: #FFEF8C;
+  border-bottom-left-radius: 5px 5px;
+  border-bottom-left-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  margin-bottom: 0.4em;
+  padding: 0.3em 3em;
+  font-weight: bold;  
+}

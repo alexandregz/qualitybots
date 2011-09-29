@@ -1,0 +1,502 @@
+/**
+ * Copyright 2011 Google Inc. All Rights Reserved.
+ *
+ * @fileoverview Style definitions for the Bots Add URL Dashboard.
+ *
+ */
+
+body {
+  overflow: hidden;
+  font-family: sans-serif;
+  font-size: 12pt;
+}
+
+div.headerContainer {
+  width: 110%;
+  height: 50px;
+  background-color: #eee;
+  position: relative;
+  left: -8px;
+  top: -8px;
+}
+
+img.headerLogo {
+  width: 120px;
+  position: relative;
+  top: 2px;
+  left: 12px;
+}
+
+div.headerButton {
+  height: 27px;
+  width: 84px;
+  color: #666;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  padding-top: 9px;
+  position: relative;
+  text-align: center;
+}
+
+div.overviewButton {
+  left: 186px;
+  top: -39px;
+  border-radius: 4px 0px 0px 4px;
+}
+
+div.runsButton {
+  left: 271px;
+  top: -77px;
+}
+
+div.resultsButton {
+  left: 356px;
+  top: -115px;
+}
+
+div.resultsButtonSelected {
+  height: 27px;
+  width: 84px;
+  color: #444;
+  border: 1px solid #aaa;
+  background-color: #e1e1e1;
+  padding-top: 9px;
+  position: relative;
+  left: 356px;
+  top: -115px;
+  text-align: center;
+}
+
+div.userWelcome {
+  height: 28px;
+  color: black;
+  padding-top: 10px;
+  position: relative;
+  left: 463px;
+  top: -156px;
+}
+
+div.dashboardDivider {
+  height: 3px;
+  background-color: #bbb;
+  position: relative;
+  left: 0px;
+  top: -148px;
+}
+
+div.statusPaneContainer {
+  position: absolute;
+  top: 52px;
+  right: 0px;
+  height: 100%;
+  width: 300px;
+  border-left: solid 2px #ddd;
+  background-color: #fff;
+  z-index: 2;
+}
+
+div.nextRunTitle {
+  position: relative;
+  padding-top: 5px;
+  padding-left: 10px;
+  color:#777;
+  font-size: 13pt;
+}
+
+div.countdown {
+  position: relative;
+  padding-top: 20px;
+  color: #000;
+  font-size: 32pt;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+}
+
+div.nextRunDate {
+  position: relative;
+  padding-top: 0px;
+  color: #000;
+  font-size: 13pt;
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+}
+
+div.alertsTitle {
+  position: relative;
+  padding-top: 25px;
+  padding-left: 10px;
+  color:#777;
+  font-size: 13pt;
+}
+
+div.alertsUsername {
+  position: relative;
+  padding-top: 15px;
+  padding-left: 15px;
+  color: #025cca;
+  font-size: 13pt;
+}
+
+div.notificationContainer {
+  background-color: #ffb;
+  border-top: 2px solid #ddd;
+  bottom: 0px;
+  height: 25px;
+  left: 0px;
+  position: absolute;
+  width: 100%;
+}
+
+div.notificationMessage {
+  padding-top: 4px;
+  padding-left: 20px;
+  font-size: 11pt;
+  color: #555;
+}
+
+div.notificationClose {
+  position: absolute;
+  top: 3px;
+  font-size: 13pt;
+  color: #999;
+  right: 315px;
+}
+
+div.resultsTitle {
+  padding-left: 5px;
+  padding-top: 5px;
+  font-size: 15pt;
+  color: #999;
+  position: relative;
+}
+
+span.runName {
+  font-weight: bold;
+  color: #000;
+}
+
+div.resultsContainer {
+  color: #999;
+  padding-top: 21px;
+  height: 100%;
+}
+
+div.comparisonTitle {
+  font-size: 13pt;
+  padding-left: 40px;
+}
+
+div.browserColumnContainer {
+  padding-left: 60px;
+  padding-top: 15px;
+  color: #000;
+}
+
+span.browserColumnHeader {
+  padding: 0px 10px 0px 10px;
+}
+
+span.urlHeader {
+  color: #777;
+  font-size: 11pt;
+  padding-left: 28px;
+}
+
+div.comparisonContainer {
+  padding-top: 7px;
+  padding-left: 5px;
+  height: 250px;
+}
+
+div.comparisonBorder {
+  border: solid 2px #bbb;
+  border-radius: 2px;
+  margin-left: 5px;
+  width: 195px;
+}
+
+div.comparisonBorderResults {
+  border: none;
+  margin-left: 7px;
+  margin-top: 2px;
+  width: 195px;
+}
+
+div.baselineColumn {
+  border: solid 2px #bbb;
+  border-radius: 4px 0px 0px 4px;
+  position: relative;
+  top: -2px;
+  left: -2px;
+  height: 180px;
+  width: 45px;
+  background-color: #ddd;
+  margin-bottom: -4px;
+}
+
+div.baselineHeader {
+  position:absolute;
+  top: 137px;
+  left: 18px;
+  color: black;
+  border: 2px solid #ddd;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  border-radius: 4px 4px 0px 0px
+}
+
+div.baselineText {
+  width: 10px;
+  position: relative;
+  left: 16px;
+  top: 5px;
+  line-height: 21px;
+  text-align: center;
+}
+
+div.comparisonNoData {
+  position: relative;
+  top: -86px;
+  left: 59px;
+  width: 150px;
+  color: #666;
+}
+
+div.scoresContainer {
+  position: absolute;
+  top: 150px;
+  padding-left: 20px;
+}
+
+div.scoresResultContainer {
+  position: relative;
+  top: 20px;
+  padding-left: 35px;
+  padding-top: 10px;
+  z-index: 2;
+}
+
+span.browser1Score {
+  padding: 0px 17px 0px 15px;
+}
+
+span.browser2Score {
+  padding: 0px 17px 0px 28px;
+}
+
+span.browser3Score {
+  padding: 0px 17px 0px 25px;
+}
+
+span.scoresURL {
+  padding-left: 55px;
+  color: #000;
+  font-size: 16pt;
+}
+
+div.inputContainer {
+  padding-top: 15px;
+  position: relative;
+}
+
+input.urlInput {
+  border-color: #ccc;
+  border-radius: 4px;
+  border-width: 2px;
+  color: #999;
+  font-size: 12pt;
+  height: 30px;
+  text-indent: 5px;
+  width: 500px;
+  position: relative;
+  left: 204px;
+  top: 10px;
+}
+
+div.addUrlContainer {
+  position: relative;
+  padding-top: 12px;
+  padding-left: 209px;
+}
+
+span.addUrlLink {
+  color: #025cca;
+  font-size: 13pt;
+  cursor: pointer;
+}
+
+div.legendContainer {
+  position: absolute;
+  top: 70px;
+  right: 840px;
+  display: none;
+}
+
+div.legendTitle {
+  color: #777;
+  left: 230px;
+  position: absolute;
+  top: -12px;
+  width: 170px;
+}
+
+img.availableIcon {
+  position: absolute;
+  top: 16px;
+  left: 10px;
+}
+
+div.availableTitle {
+  color: #777;
+  left: 30px;
+  position: absolute;
+  top: 14px;
+  width: 150px;
+}
+
+img.computingIcon {
+  left: 10px;
+  position: absolute;
+  top: 38px;
+}
+
+div.computingTitle {
+  position: absolute;
+  top: 36px;
+  left: 30px;
+  width: 150px;
+  color: #777;
+}
+
+div.excellentTitle {
+  color: #777;
+  left: 142px;
+  position: absolute;
+  top: 36px;
+  width: 150px;
+}
+
+img.excellentIcon {
+  left: 150px;
+  position: absolute;
+  top: 16px;
+}
+
+img.greatIcon {
+  left: 210px;
+  position: absolute;
+  top: 16px;
+}
+
+div.greatTitle {
+  color: #777;
+  left: 210px;
+  position: absolute;
+  top: 36px;
+  width: 150px;
+}
+
+div.greatSeparator {
+  position: absolute;
+  top: 23px;
+  left: 168px;
+  background-color: #999;
+  width: 40px;
+  height: 2px;
+}
+
+img.goodIcon {
+  left: 270px;
+  position: absolute;
+  top: 16px;
+}
+
+div.goodTitle {
+  position: absolute;
+  top: 36px;
+  left: 260px;
+  width: 150px;
+  color: #777;
+}
+
+div.goodSeparator {
+  position: absolute;
+  top: 23px;
+  left: 228px;
+  background-color: #999;
+  width: 40px;
+  height: 2px;
+}
+
+img.fairIcon {
+  left: 330px;
+  position: absolute;
+  top: 16px;
+}
+
+div.fairTitle {
+  position:absolute;
+  top: 36px;
+  left: 320px;
+  width: 150px;
+  color: #777;
+}
+
+div.fairSeparator {
+  position: absolute;
+  top: 23px;
+  left: 288px;
+  background-color: #999;
+  width: 40px;
+  height: 2px;
+}
+
+img.poorIcon {
+  left: 390px;
+  position: absolute;
+  top: 16px;
+}
+
+div.poorTitle {
+  position:absolute;
+  top: 36px;
+  left: 385px;
+  width: 150px;
+  color: #777;
+}
+
+div.poorSeparator {
+  position: absolute;
+  top: 23px;
+  left: 348px;
+  background-color: #999;
+  width: 40px;
+  height: 2px;
+}
+
+img.noDataIcon {
+  left: 450px;
+  position: absolute;
+  top: 16px;
+}
+
+div.noDataTitle {
+  position:absolute;
+  top: 36px;
+  left: 430px;
+  width: 150px;
+  color: #777;
+}
+
+div.noDataSeparator {
+  position: absolute;
+  top: 23px;
+  left: 408px;
+  background-color: #999;
+  width: 40px;
+  height: 2px;
+}

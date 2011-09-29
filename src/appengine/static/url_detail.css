@@ -1,0 +1,376 @@
+/**
+ * Copyright 2011 Google Inc. All Rights Reserved.
+ *
+ * @fileoverview Style definitions for the Bots Add URL Dashboard.
+ *
+ */
+
+body {
+  overflow: hidden;
+}
+
+div.headerContainer {
+  background-color: #eee;
+  font-family: sans-serif;
+  font-size: 12pt;
+  height: 50px;
+  left: -8px;
+  position: relative;
+  top: -8px;
+  width: 110%;
+}
+
+img.headerLogo {
+  left: 12px;
+  position: relative;
+  top: 2px;
+  width: 120px;
+}
+
+div.headerButton {
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  color: #666;
+  height: 27px;
+  padding-top: 9px;
+  position: relative;
+  text-align: center;
+  width: 84px;
+}
+
+div.overviewButton {
+  border-radius: 4px 0px 0px 4px;
+  left: 186px;
+  top: -39px;
+}
+
+div.runsButton {
+  left: 271px;
+  top: -77px;
+}
+
+div.resultsButton {
+  left: 356px;
+  top: -115px;
+}
+
+div.resultsButtonSelected {
+  background-color: #e1e1e1;
+  border: 1px solid #aaa;
+  color: #444;
+  height: 27px;
+  left: 356px;
+  padding-top: 9px;
+  position: relative;
+  text-align: center;
+  top: -115px;
+  width: 84px;
+}
+
+div.userWelcome {
+  color: black;
+  height: 28px;
+  left: 463px;
+  padding-top: 10px;
+  position: relative;
+  top: -156px;
+}
+
+div.dashboardDivider {
+  background-color: #bbb;
+  height: 3px;
+  left: 0px;
+  position: relative;
+  top: -148px;
+}
+
+div.scorePane {
+  background-color: #fff;
+  border-left: solid 2px #ddd;
+  font-family: arial;
+  height: 100%;
+  position: absolute;
+  right: 0px;
+  top: 52px;
+  width: 300px;
+  z-index: 2;
+}
+
+div.scoreTitle {
+  color: #888;
+  font-size: 16pt;
+  padding-left: 12px;
+  padding-top: 12px;
+}
+
+div.scorePercent {
+  color: rgb(150, 211, 24);
+  font-family: arial;
+  font-size: 32pt;
+  margin-left: 10px;
+  padding-left: 92px;
+  padding-top: 10px;
+  position:absolute;
+}
+
+div.currentTitle {
+  color: #bbb;
+  font-family: arial;
+  font-size: 10pt;
+  margin-left: 10px;
+  padding-left: 110px;
+  padding-top: 52px;
+}
+
+div.totalElements {
+  color: #888;
+  font-size: 16pt;
+  padding-left: 12px;
+  padding-top: 32px;
+  position: absolute;
+}
+
+div.elementsDivider {
+  background-color: #888;
+  font-size: 16pt;
+  height: 3px;
+  margin-left: 12px;
+  position: absolute;
+  top: 161px;
+  width: 276px;
+}
+
+div.matchedElements {
+  color: rgb(135,190,20);
+  font-size: 16pt;
+  padding-left: 12px;
+  padding-top: 57px;
+  position: absolute;
+}
+
+div.differingElements {
+  color: rgb(200,204,17);
+  font-size: 16pt;
+  font-weight: bold;
+  padding-top: 90px;
+  position: absolute;
+  text-align: center;
+  width: 300px;
+}
+
+div.previewLabel {
+  color: #999;
+  font-size: 14pt;
+  padding-left: 12px;
+  padding-top: 137px;
+  position: absolute;
+}
+
+span.previewTitle {
+  font-weight: bold
+}
+
+img.screenshotPreview {
+  height: 150px;
+  padding-left: 12px;
+  padding-top: 170px;
+  position:absolute;
+}
+
+div.channelTitle {
+  color: #999;
+  font-size: 16pt;
+  font-weight: bold;
+  padding-left: 12px;
+  padding-top: 347px;
+  position: absolute;
+}
+
+span.baseLabel {
+  font-size: 10pt;
+  margin-left: 2px;
+}
+
+span.refVersionTitle {
+  font-weight: bold;
+}
+
+span.versionTitle {
+  font-size: 14pt;
+  margin-left: 5px;
+}
+
+span.versionNumber {
+  font-size: 13pt;
+  color: #777;
+}
+
+span.highScore {
+  font-size: 12pt;
+  margin-left: 19px;
+  color: rgb(150, 211, 24);
+}
+
+span.midScore {
+  font-size: 12pt;
+  margin-left: 19px;
+  color: rgb(255, 127, 39);
+}
+
+span.lowScore {
+  font-size: 12pt;
+  margin-left: 19px;
+  color: rgb(255, 20, 20);
+}
+
+div.notesTitle {
+  position: absolute;
+  color: #999;
+  font-size: 16pt;
+  padding-left: 12px;
+  padding-top: 37px;
+  font-weight: bold;
+}
+
+div.notesLink {
+  position: absolute;
+  color: #bbb;
+  font-size: 16pt;
+  padding-top: 70px;
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+}
+
+div.layoutDescription {
+  color: #888;
+  font-size: 14pt;
+  padding-left: 12px;
+  padding-top: 13px;
+  font-family: arial;
+}
+
+span.layoutStrongText {
+  color: #000;
+}
+
+img.testBrowserScreenshot {
+  padding-top: 8px;
+}
+
+table.browserTable {
+  margin-top: 383px;
+  width: 103%;
+}
+
+tr.refBrowserRow {
+  height: 35px;
+  background-color: #444;
+  color: #ccc;
+}
+
+tr.selectedBrowserRow {
+  height: 35px;
+  background-color: #eee;
+  color: #222;
+}
+
+tr.browserRow {
+  height: 35px;
+  color: #222;
+}
+
+td.browserScore {
+  width: 50px;
+  text-align: center;
+}
+
+td.browserName {
+  width: 110px;
+}
+
+td.browserVersion {
+  width: 90px;
+}
+
+div.hidden {
+  display: none;
+}
+
+div.screenshotFrame {
+  position: absolute;
+  top: 98px;
+  overflow: hidden;
+  border: 4px solid #ddd;
+  cursor: move;
+}
+
+div.screenshotContainer {
+  position: relative;
+  margin-top: -8px;
+}
+
+div.browserLabelContainer {
+  background-color: #fff;
+  border: 4px solid #ddd;
+  bottom: -4px;
+  height: 30px;
+  left: 20%;
+  padding-top:10px;
+  position: absolute;
+  text-align: center;
+  width: 60%;
+  z-index: 12;
+}
+
+div.expandedBrowserLabelContainer {
+  background-color: #fff;
+  border: 4px solid #ddd;
+  bottom: -4px;
+  height: 130px;
+  left: -4px;
+  padding-top: 10px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  z-index: 12;
+}
+
+span.browserLabel {
+  font-family: arial;
+  font-size: 12pt;
+}
+
+span.baselineLabel {
+  color: #888;
+}
+
+span.overlayLink {
+  color: #666;
+  font-family: arial;
+  font-size: 12pt;
+  position: absolute;
+  right: 320px;
+}
+
+span.overlayLinkActive {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+div.overlayCanvas {
+  left: 0px;
+  position: absolute;
+  top: 0px;
+  z-index: 10;
+}
+
+span.greyText {
+  color: #444;
+}
+
+div.elementData {
+  text-align: left;
+  padding-left: 10px
+  padding-top: 8px;
+}

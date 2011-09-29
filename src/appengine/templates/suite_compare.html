@@ -1,0 +1,170 @@
+<html>
+  <head>
+    <title>QualityBots - Suite Compare</title>
+    <link rel="stylesheet" href="http://www.google.com/css/go.css"
+          type="text/css" />
+    <link rel="stylesheet" href="/s/qualitybots.css" type="text/css" />
+    <link rel="stylesheet" href="/s/mytable.css" type="text/css" />
+    <script type="text/javascript" src="/js/suite_compare_script.js"></script>
+  </head>
+
+  <body onLoad="appcompat.webdiff.SuiteCompare.setRefereshFormParams()">
+    <h1>
+      <a href="/">
+        <img src="/s/qualitybotslogo.png" alt="QualityBots"
+             width="142" height="54"></a>
+      Suite: {{suite.date}}</h1>
+
+    <ul id="nav">
+      <li>Views
+        <ul>
+          <li>
+            <a href="/suite/list" class="option">Suite List</a>
+          </li>
+        </ul>
+      <li>Current Suite
+        <ul>
+          <li>
+            <a href="/suite/details?suite={{ suite.key }}"
+               class="option">Results</a>
+          </li>
+          <li>
+            <a href="/suite/compare?suite={{ suite.key }}&order=-score&dev_threshold=0&score_threshold=99"
+               class="option selected">Compare</a>
+          </li>
+          <li>
+            <a href="/suite/stats?suite={{ suite.key }}"
+               class="option">Score Stats</a>
+          </li>
+        </ul>
+    </ul>
+
+    <div id="aux">
+      <span style="font-size:14px"><b>Threshold Values:</b></span>
+      &nbsp;&nbsp;
+      <span style="font-size:12px">Score:</span>
+      &nbsp;
+      <input type="text" id="score_threshold" size="1" value="99.00"/>
+      &nbsp;|&nbsp;
+      <span style="font-size:12px">Standard Deviation:</span>
+      &nbsp;
+      <input type="text" id="dev_threshold" size="1" value="0.00"/>
+      <br/><br/>
+      <span style="font-size:14px"><b>Display Only :</b></span>
+      &nbsp;
+      <input type="checkbox" checked="checked" id="display_fail"> Fail
+      <input type="checkbox" checked="checked" id="display_pass"> Pass
+      &nbsp;&nbsp; | &nbsp;&nbsp;
+      <span style="font-size:14px"><b>Show All</b></span>
+      &nbsp;
+      <input type="checkbox" checked="checked" id="show_all">
+      <br/><br/>
+      <input type="submit" name="refresh" value="Refresh"
+             onclick="appcompat.webdiff.SuiteCompare.refreshPage()">
+
+      <ul>
+        <li>Number of URLs: ~{{suite.GetNumSites}}</li>
+        <li>Reference browser: {{suite.ref_browser|UnicodeString}}</li>
+        <li>Test browsers: {{suite.GetTestBrowsers|ListToString}}</li>
+        <li>Data received: {{ data_count }}</li>
+        <li>Result computed: {{ delta_count }}</li>
+      </ul>
+      <p>{{ suite.description }}</p>
+
+      <table class="container">
+        <tr>
+          <td class="toolbar">
+            <div class="rightLinks">Sort:
+              <a id="latest" href="{{ latest_url }}">Latest</a> |
+              <a id="scoresHL" href="{{ scores_hl_url }}">
+                Score High -&gt; Low</a> |
+              <a id="scoresLH" href="{{ scores_lh_url }}">
+                Score Low -&gt; High </a>
+            </div>
+            <div class="paging">
+              {% if prev %}
+              <a href="{{ prev_url }}">&lt; Prev {{ limit }}</a>
+              {% endif %}
+              &nbsp;{{ start }} - {{ record_count }}&nbsp;
+              {% if next %}
+              <a href="{{ next_url }}">Next {{ limit }} &gt;</a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="info">
+            <table class="appcompat" cellpadding="0" cellspacing="0"
+                   border="0" summary="Results Table">
+              <thead>
+                <tr class="mainTasksHeader">
+                  <th>
+                    <input type="checkbox"
+                           onClick="appcompat.webdiff.SuiteCompare.selectAll('result', this.checked)" />
+                  </th>
+                  <th>Test Browser</th>
+                  <th>Ref Browser</th>
+                  <th>Url</th>
+                  <th>Date</th>
+                  <th>Score</th>
+                  <th>Standard Deviation</th>
+                  <th>Test Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for entry in deltas %}
+                <tr class={% cycle "odd","even" %}>
+                  <td>
+                    <input type="checkbox" name="result"
+                           value="{{ entry.key }}" />
+                  </td>
+                  <td>{{ entry.delta.0.GetTestBrowser|UnicodeString }}</td>
+                  <td>{{ entry.delta.0.GetRefBrowser|UnicodeString }}</td>
+                  <td>
+                    <a href="{{ entry.delta.0.test_data.site.url }}"
+                       target="_blank">{{ entry.delta.0.GetSiteUrl }}</a>
+                  </td>
+                  <td>
+                    {% for e in entry.delta %}
+                      {% ifnotequal forloop.counter 1 %}
+                        <br/>
+                      {% endifnotequal %}
+                      <a href="/delta/show?key={{ e.key }}" target="_blank">
+                        {{ e.date|date:"D d M,Y h:i:s A T" }}</a>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for e in entry.delta %}
+                      {% ifnotequal forloop.counter 1 %}
+                        <br/>
+                      {% endifnotequal %}
+                      <b>{{ e.score|StringToFloat2 }}</b>
+                      {% if not e.Completed %}
+                        <br />
+                        <a href="/compute_delta?delta={{ e.key }}">Retry</a>
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>{{ entry.std|StringToFloat2 }}</td>
+                  <td>
+                    {% if entry.fail %}
+                      <img src="/s/fail.png" alt="Fail" height="20">
+                    {% else %}
+                      <img src="/s/pass.png" alt="Pass" height="20">
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="footer">
+      <br/>&copy; 2010 Google.
+    </div>
+
+  </body>
+</html>

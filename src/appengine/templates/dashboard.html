@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QualityBots - Dashboard</title>
+<link rel="stylesheet" href="http://www.google.com/css/go.css" type="text/css"/>
+<link rel="stylesheet" href="/s/qualitybots.css" type="text/css" />
+<link rel="stylesheet" href="/s/mytable.css" type="text/css" />
+ <!--Load the AJAX API-->
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+  // Load the Visualization API and the column chart package.
+  google.load('visualization', '1', {'packages':['corechart', 'motionchart']});
+
+  // Set a callback to run when the Google Visualization API is loaded.
+  google.setOnLoadCallback(drawChart);
+
+  // Callback that creates and populates a data table,
+  // instantiates the pie chart, passes in the data and
+  // draws it.
+  function drawChart() {
+    // Let's create pie chart data table.
+    var pieChartData = new google.visualization.DataTable();
+    pieChartData.addColumn('string', 'Layout Score Range');
+    pieChartData.addColumn('number', 'Score Count');
+    pieChartData.addRows({{ score_disribution|length }});
+    {% for d in score_disribution %}
+      pieChartData.setValue({{ forloop.counter0 }}, 0, '{{ d.name|escape }}');
+      pieChartData.setValue({{ forloop.counter0 }}, 1, {{ d.count }});
+    {% endfor %}
+
+    // Instantiate and draw pie chart, passing in some options.
+    var pieChart = new google.visualization.PieChart(
+        document.getElementById('pie_chart_div'));
+    pieChart.draw(pieChartData,
+                  {title: 'Layout Score Disribution', width:500, height:400});
+
+    // Let's create trend chart data table.
+    var trendChartData = new google.visualization.DataTable();
+    trendChartData.addColumn('string', 'Compatibility');
+    trendChartData.addColumn('date', 'Date');
+    trendChartData.addColumn('number', 'Layout Similarity (aka LayoutScore)');
+    trendChartData.addColumn('string', 'Chrome Canary Vs Dev Build');
+    trendChartData.addRows({{ trend_chart_data|length }});
+    {% for td in trend_chart_data %}
+    trendChartData.setValue({{ forloop.counter0 }}, 0, '{{ td.type|escape }}');
+    trendChartData.setValue({{ forloop.counter0 }}, 1,
+                            new Date('{{ td.date }}'));
+    trendChartData.setValue({{ forloop.counter0 }}, 2,
+                            {{ td.score|StringToFloat2 }});
+    trendChartData.setValue({{ forloop.counter0 }}, 3, '{{ td.build }}');
+    {% endfor %}
+
+    // Instantiate and draw trend/motion chart, passing in some options.
+    var trendChart = new google.visualization.MotionChart(
+        document.getElementById('trend_chart_div'));
+    trendChart.draw(trendChartData,
+                    {title: 'Layout Score Trend', width:800, height:400});
+  }
+</script>
+</head>
+
+<body>
+
+<h1>
+  <a href="/"><img src="/s/qualitybotslogo.png" alt="QualityBots"
+                   width="142" height="54"></a>
+</h1>
+
+<ul id="nav">
+  <li>Views
+    <ul>
+      <li><a href="/suite/list" class="option">Suite List</a></li>
+    </ul>
+  {% if latest_test_suite %}
+  <li>Current Suite
+    <ul>
+      <li><a href="/suite/details?suite={{ latest_test_suite.key }}"
+             class="option">Results</a></li>
+      <li><a href="/suite/compare?suite={{ latest_test_suite.key }}"
+             class="option">Compare</a></li>
+      <li><a href="/suite/stats?suite={{ latest_test_suite.key }}"
+             class="option">Score Stats</a></li>
+    </ul>
+  {% endif %}
+</ul>
+<span style="font-size:2.5em;">{{ latest_test_browser_name }}</span>
+<div id="aux">
+  <table>
+    <tbody>
+        <tr valign="top">
+          <td style="float:left">
+            <a href="/suite/details?suite=latest&order=score">
+              <img src="/s/{{ light }}.jpg"
+                   alt="QualityBots Layout Status"
+                   width="300" height="400">
+            </a>
+          </td>
+          <td style="float:left;">
+            <div id="pie_chart_div"></div>
+          </td>
+        </tr>
+      </tbody>
+  </table>
+<div id="trend_chart_div"></div>
+</div>
+
+<div class="footer">
+  <br/>&copy; 2011 Google.
+</div>
+
+</body>
+</html>

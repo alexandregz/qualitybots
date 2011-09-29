@@ -1,0 +1,15 @@
+{% extends 'delta.html' %}
+
+{% block content %}
+<p>Page:
+  {% for i in entry_indices %}
+    <a href="/delta/list?i={{ i }}&key={{ delta.key }}">{{ i }}</a>
+  {% endfor %}
+</p>
+<p>Current page: {{ current_index }}</p>
+<table class="dataTable" cellspacing="0" cellpadding="0">
+  {% for p in delta_list %}
+    {{ p|ListToTableRow }}
+  {% endfor %}
+</table>
+{% endblock %}

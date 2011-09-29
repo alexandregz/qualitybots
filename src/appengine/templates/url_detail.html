@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>QualityBots Detail Results Page</title>
+  <link rel="stylesheet" href="/s/url_detail.css" type="text/css" />
+  <script type="text/javascript" src="/js/url_detail_script.js"></script>
+</head>
+<body>
+<div class="headerContainer">
+  <img src="/s/qualitybotslogo.png" class="headerLogo"
+       alt="QualityBots" />
+  <div class="headerButton overviewButton">Overview</div>
+  <div class="headerButton runsButton">Runs</div>
+  <div class="headerButton resultsButtonSelected">Results</div>
+  <div class="userWelcome">{{email}}'s QualityBots Tests</div>
+  <div class="dashboardDivider"></div>
+</div>
+
+<div class="scorePane">
+  <div class="scoreTitle">Layout Score</div>
+  <div id="scorePercent" class="scorePercent"></div>
+  <div class="currentTitle">Current</div>
+  <div id="totalElements" class="totalElements">... elements total</div>
+  <div class="elementsDivider"></div>
+  <div id="matchedElements" class="matchedElements">... matched</div>
+  <div id="differingElements" class="differingElements">... need investigation</div>
+  <div class="previewLabel">
+     <span class="previewTitle">Preview</span>
+     (drag to pan)
+  </div>
+  <img id="testThumbnail"
+       src="/s/blank.png" class="screenshotPreview"
+       alt="Thumbnail of a screenshot of browser under test" />
+  <div class="channelTitle">Chrome Channels</div>
+  <table class="browserTable" cellspacing="0"
+         summary="Scores for this url on other browser channels.">
+    <tr class="refBrowserRow">
+      <td class="browserScore">
+        <span class="baseLabel">BASE</span>
+      </td>
+      <td style="width: 110px">
+         <span class="versionTitle refVersionTitle">Release</span>
+      </td>
+      <td style="width: 100px">
+         <span class="versionNumber">14.0.835.0</span>
+      </td>
+    </tr>
+    <tr class="selectedBrowserRow">
+      <td class="browserScore">
+        <span class="highScore">98</span>
+      </td>
+      <td class="browserName">
+        <span class="versionTitle">Stable</span>
+      </td>
+      <td class="browserVersion">
+        <span class="versionNumber">15.0.874.15</span>
+      </td>
+    </tr>
+    <tr class="browserRow">
+      <td class="browserScore">
+        <span class="midScore">65</span>
+      </td>
+      <td class="browserName">
+        <span class="versionTitle">Canary</span>
+      </td>
+      <td class="browserVersion">
+        <span class="versionNumber">16.0.883.0</span>
+      </td>
+    </tr>
+    <tr class="browserRow">
+      <td class="browserScore">
+        <span class="lowScore">48</span>
+      </td>
+      <td class="browserName">
+        <span class="versionTitle">Developer</span>
+      </td>
+      <td class="browserVersion">
+        <span class="versionNumber">12.0.802.1</span>
+      </td>
+    </tr>
+  </table>
+  <div class="notesTitle">Notes</div>
+  <div class="notesLink">click to add notes</div>
+</div>
+
+<div class="layoutDescription">
+ Layout of page
+ <span id="urlLabel" class="layoutStrongText">...</span>
+ on
+ <span class="layoutStrongText">Latest Run </span>
+ <span class="overlayLink overlayLinkActive"
+       id="overlayLink">Enable Element Overlay</span>
+</div>
+<div id="comparisonContainer" class="hidden">
+  <div id="dataFrames">
+    <div id="testFrame" class="screenshotFrame">
+      <div id="testData" class="screenshotContainer">
+        <img class="testBrowserScreenshot"
+             id="testScreenshot" src="/s/blank.png"
+             alt="Screenshot of browser under test"/>
+      </div>
+      <div id="testBrowserLabelContainer" class="browserLabelContainer">
+        <span id="testBrowserLabel" class="browserLabel"></span>
+        <div id="testElementData" class="elementData"></div>
+      </div>
+    </div>
+    <div id="refFrame" class="screenshotFrame">
+      <div id="refData" class="screenshotContainer">
+        <img class="testBrowserScreenshot"
+             id="refScreenshot" src="/s/blank.png"
+             alt="Screenshot of browser under test"/>
+      </div>
+      <div id="refBrowserLabelContainer" class="browserLabelContainer">
+        <span id="refBrowserLabel" class="browserLabel"></span>
+        <span class="browserLabel baselineLabel"> - baseline</span>
+        <div id="refElementData" class="elementData"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+</html>

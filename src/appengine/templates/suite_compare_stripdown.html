@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <title>QualityBots - Suite Compare</title>
+    <link rel="stylesheet" href="http://www.google.com/css/go.css"
+          type="text/css" />
+    <link rel="stylesheet" href="/s/qualitybots.css" type="text/css" />
+    <style TYPE="text/css">
+      table tr:hover {
+      background-color:#ffffcc;
+      }
+    </style>
+    <script type="text/javascript" src="/js/suite_compare_stripdown_script.js">
+    </script>
+  </head>
+
+  <body onLoad="appcompat.webdiff.SuiteCompareStripDown.setNavMenuSelect()">
+    <h1>
+      <a href="/">
+        <img src="/s/qualitybotslogo.png"
+             alt="QualityBots" width="142" height="54"></a>
+      Suite: {{suite.date}}
+    </h1>
+    <ul id="nav">
+      <li>Views
+        <ul>
+          <li><a href="/suite/list" class="option">Suite List</a></li>
+        </ul>
+      </li>
+      <li>Latest Suite
+        <ul>
+          <li>
+            <a id="latest_suite_details" href="/suite/details?suite=latest"
+               class="option">Details</a>
+          </li>
+          <li>
+            <a id="latest_suite_pass" href="/pass" class="option">Pass</a>
+          </li>
+          <li>
+            <a id="latest_suite_fail" href="/fail" class="option">Fail</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <div id="aux">
+      <b> Total Count: </b> {{ record_count }}
+      <table cellpadding="5" cellspacing="0" border="0"
+             summary="Results Table">
+        <tbody>
+          {% for entry in deltas %}
+          <tr>
+            <td>
+              <a href="{{ entry.delta.0.test_data.site.url }}"
+                 target="_blank">{{ entry.delta.0.GetSiteUrl }}</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <br/>&copy; 2010 Google.
+    </div>
+  </body>
+</html>
