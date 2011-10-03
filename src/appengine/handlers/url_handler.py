@@ -46,7 +46,10 @@ class UrlDashboard(base.BaseHandler):
       # then show the welcome addurl landing page.  Otherwise show the
       # dashboard.
       if bots_user.GetBotsUser(user):
-        self.RenderTemplate('url_dashboard.html', {'email': user.email()})
+        self.RenderTemplate(
+            'url_dashboard.html',
+            {'email': user.email(),
+             'logout_url': users.create_logout_url(URL_DASHBOARD_URL)})
       else:
         self.RenderTemplate('addurl_landing.html', {})
     else:
@@ -63,7 +66,10 @@ class UrlDetail(base.BaseHandler):
     user = users.get_current_user()
 
     if user:
-      self.RenderTemplate('url_detail.html', {'email': user.email()})
+      self.RenderTemplate(
+          'url_detail.html',
+          {'email': user.email(),
+           'logout_url': users.create_logout_url(URL_DASHBOARD_URL)})
     else:
       self.redirect(users.create_login_url(self.request.uri))
 

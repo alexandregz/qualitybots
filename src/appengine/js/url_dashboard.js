@@ -24,13 +24,32 @@ goog.provide('bots.dashboard.UrlDashboard');
 goog.require('bots.dashboard.BrowserSelection');
 goog.require('bots.dashboard.Common');
 goog.require('bots.dashboard.Constants');
-goog.require('bots.dashboard.Countdown');
 goog.require('bots.dashboard.UrlInput');
 goog.require('bots.dashboard.UrlManager');
 goog.require('goog.Timer');
 goog.require('goog.dom');
 goog.require('goog.net.XhrIo');
 goog.require('goog.style');
+
+
+/**
+ * Updates the UI of the page when the starts entering a url.
+ * @export
+ */
+function activateUrlUIUpdate() {
+  goog.style.setStyle(goog.dom.getElement(
+      bots.dashboard.Constants.URL_SUBMIT_ID), 'display', 'block');
+}
+
+
+/**
+  * Resets the page to its default appearance.
+  * @export
+  */
+function resetPageUI() {
+  goog.style.setStyle(goog.dom.getElement(
+      bots.dashboard.Constants.URL_SUBMIT_ID), 'display', 'none');
+}
 
 
 /**
@@ -57,19 +76,12 @@ function initBrowserSelection() {
 
 
 /**
- * Inits the countdown until the next Bots run.
- */
-function initCountdown() {
-  countdownManager = new bots.dashboard.Countdown('nextRunCountdown');
-}
-
-
-/**
  * Inits the URL input box on the page and submit button.
  */
 function initUrlInputs() {
   urlInputBox = new bots.dashboard.UrlInput(
-      bots.dashboard.Constants.URL_INPUT_ID);
+      bots.dashboard.Constants.URL_INPUT_ID, activateUrlUIUpdate,
+      resetPageUI);
 
   var urlSubmitBox = goog.dom.getElement(
       bots.dashboard.Constants.URL_SUBMIT_ID);
@@ -79,14 +91,11 @@ function initUrlInputs() {
 }
 
 
-// Create instances of the urlManager, urlInput, and countdownManager
-// (init'd below).
+// Create instances of the urlManager and urlInput.
 var urlInputBox = null;
 var urlManager = new bots.dashboard.UrlManager();
-var countdownManager = null;
 
 // Queue up the init functions.
-goog.Timer.callOnce(initCountdown, 0);
 goog.Timer.callOnce(initBrowserSelection, 0);
 goog.Timer.callOnce(initUrlInputs, 0);
 goog.Timer.callOnce(

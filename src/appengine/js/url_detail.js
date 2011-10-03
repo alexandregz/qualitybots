@@ -30,6 +30,7 @@ goog.require('goog.fx.Dragger');
 goog.require('goog.graphics');
 goog.require('goog.json');
 goog.require('goog.net.XhrIo');
+goog.require('goog.string');
 goog.require('goog.style');
 
 
@@ -100,13 +101,6 @@ bots.dashboard.DetailPage.prototype.TEST_SCREENSHOT_ID = 'testScreenshot';
  */
 bots.dashboard.DetailPage.prototype.TEST_SCREENSHOT_CONTAINER_ID =
     'testData';
-
-
-/**
- * The ID of the thumbnail of the test browser screenshot.
- * @type {string}
- */
-bots.dashboard.DetailPage.prototype.TEST_THUMBNAIL_ID = 'testThumbnail';
 
 
 /**
@@ -254,26 +248,54 @@ bots.dashboard.DetailPage.prototype.SCREENSHOT_WIDTH_MARGIN = 28;
 
 
 /**
+* Test Browser channel.
+* @type {?string}
+* @private
+*/
+bots.dashboard.DetailPage.prototype.testBrowserChannel_ = null;
+
+
+/**
+* Sets the test browser selection in browser score section.
+* @export
+*/
+bots.dashboard.DetailPage.prototype.setTestBrowserSelection = function() {
+  var testBrowsers = goog.dom.getElementsByClass('browserRow');
+  for (var i = 0; i < testBrowsers.length; i++) {
+    var testVersionElem = goog.dom.getElementByClass(
+        'versionTitle', testBrowsers[i]);
+    var testVersion = goog.dom.getTextContent(testVersionElem);
+    if (testVersion.toLowerCase() == this.testBrowserChannel_.toLowerCase()) {
+      goog.dom.setProperties(testBrowsers[i], {'class': 'selectedBrowserRow'});
+      return;
+    }
+  }
+};
+
+
+/**
  * Handles data from the server for the detail page request.
  * @param {Object} response Response from the server.
  * @export
  */
 bots.dashboard.DetailPage.prototype.handleDetailData = function(response) {
-  var json_response = response.target.getResponseJson();
-  if (json_response['status'] == 'success') {
-    var resultDetails = json_response['result_details'];
+  var jsonResponse = response.target.getResponseJson();
+  if (jsonResponse['status'] == 'success') {
+    var resultDetails = jsonResponse['result_details'];
     var comparisonContainer = goog.dom.getElement('comparisonContainer');
+    this.testBrowserChannel_ =
+        resultDetails['test_browser_channel'];
+    this.setTestBrowserSelection();
 
     this.displayScreenshot_(this.TEST_SCREENSHOT_ID,
-                            resultDetails['test_screenshot_key']);
-    this.displayScreenshot_(this.TEST_THUMBNAIL_ID,
                             resultDetails['test_screenshot_key']);
     this.displayScreenshot_(this.REF_SCREENSHOT_ID,
                             resultDetails['ref_screenshot_key']);
 
     var scorePercent = goog.dom.getElement(this.SCORE_PERCENT_ID);
+    var score = Math.floor(parseFloat(resultDetails['score']));
     goog.dom.setProperties(scorePercent, {
-        'innerHTML': Math.floor(resultDetails['score']) + '%'});
+        'innerHTML': score.toString() + '%'});
 
     var testLabel = goog.dom.getElement(this.TEST_BROWSER_LABEL_ID);
     goog.dom.setProperties(testLabel, {'innerHTML': 'Chrome ' +
@@ -312,6 +334,125 @@ bots.dashboard.DetailPage.prototype.handleDetailData = function(response) {
 
     this.response = resultDetails;
   }
+};
+
+
+
+/**
+* Handles data from the server for the detail page request.
+* @param {number} score Browser layout score.
+* @return {Element} Span element with score info as innertext.
+* @export
+*/
+bots.dashboard.DetailPage.prototype.createScoreSpan = function(score) {
+  if (score >= 99) {
+    var scoreSpan = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': 'highScore'});
+  }
+  else if (score <= 98 && score >= 90) {
+    var scoreSpan = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': 'midScore'});
+  }
+  else {
+    var scoreSpan = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': 'lowScore'});
+  }
+  score = Math.floor(score);
+  goog.dom.setTextContent(scoreSpan, score.toString());
+  return scoreSpan;
+};
+
+
+/**
+* Opens the detail page with url and browser selected as parameters.
+* @param {string} resultKey The key to the page/browsers results.
+* @private
+*/
+bots.dashboard.DetailPage.prototype.openDetailPage_ = function(resultKey) {
+  window.location =
+  bots.dashboard.Constants.DETAIL_URL + '?' +
+  bots.dashboard.Constants.DETAIL_URL_DELTAKEY_PARAM + '=' + resultKey;
+};
+
+
+/**
+* Handles data from the server for the detail page request.
+* @param {string} channel Brower channel information.
+* @param {string} version Brower version information.
+* @param {number} score Brower score information.
+* @param {string} deltaKey Associated page_delta_key.
+* @export
+*/
+bots.dashboard.DetailPage.prototype.addBrowserData =
+    function(channel, version, score, deltaKey) {
+  var refBrowserRow = goog.dom.getElementByClass('refBrowserRow');
+  if (refBrowserRow) {
+    // Let's add browser score data.
+    var scoreSpan = this.createScoreSpan(score);
+    var browserScore = goog.dom.createDom(goog.dom.TagName.TD, {
+      'class': 'browserScore'}, scoreSpan);
+    // Let's add browser channel data.
+    var browserChannelSpan = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': 'versionTitle'});
+    goog.dom.setTextContent(browserChannelSpan,
+                            goog.string.toCamelCase(channel));
+    var browserChannel = goog.dom.createDom(goog.dom.TagName.TD, {
+      'class': 'browserName'}, browserChannelSpan);
+    // Let's add browser version data.
+    var versionSpan = goog.dom.createDom(goog.dom.TagName.SPAN, {
+      'class': 'versionNumber'});
+    goog.dom.setTextContent(versionSpan, version);
+    var browserVersion = goog.dom.createDom(goog.dom.TagName.TD, {
+      'class': 'browserVersion'}, versionSpan);
+    // Let's add browser row now.
+    var browserRow = goog.dom.createDom(
+        goog.dom.TagName.TR, {'class': 'browserRow',
+        'style': 'cursor: pointer'}, browserScore, browserChannel,
+        browserVersion);
+    goog.dom.appendChild(goog.dom.getPreviousNode(refBrowserRow), browserRow);
+    goog.events.listen(browserRow, goog.events.EventType.CLICK,
+                       goog.bind(this.openDetailPage_, this, deltaKey));
+  }
+};
+
+
+/**
+* Sets reference browser version.
+* @param {string} version Browser version.
+* @export
+*/
+bots.dashboard.DetailPage.prototype.setRefBrowserVersion = function(version) {
+  var refBrowserRow = goog.dom.getElementByClass('refBrowserRow');
+  if (refBrowserRow) {
+    var versionSpan = goog.dom.getElementByClass('versionNumber',
+                                                 refBrowserRow);
+    if (versionSpan) {
+      goog.dom.setTextContent(versionSpan, version);
+    }
+  }
+};
+
+
+/**
+* Handles data from the server for the detail page metadata request.
+* @param {Object} response Response from the server.
+* @export
+*/
+bots.dashboard.DetailPage.prototype.handleDetailMetaData = function(response) {
+  var jsonResponse = response.target.getResponseJson();
+  if (jsonResponse['status'] == 'success' &&
+    jsonResponse['message'] != 'No results data found.') {
+      this.setRefBrowserVersion(
+          jsonResponse['result_deltas'][0]['ref_browser_version']);
+      for (var i = 0; i < jsonResponse['result_deltas'].length; i++) {
+        this.addBrowserData(
+            jsonResponse['result_deltas'][i]['test_browser_channel'],
+            jsonResponse['result_deltas'][i]['test_browser_version'],
+            jsonResponse['result_deltas'][i]['score'],
+            jsonResponse['result_deltas'][i]['page_delta_key']);
+      }
+  }
+  this.setTestBrowserSelection();
 };
 
 
@@ -419,6 +560,17 @@ bots.dashboard.DetailPage.prototype.updateScreenshotContainers_ = function() {
   refFrame.style.height = testHeight;
 };
 
+/**
+* Fetches the detail page data which will be handled by handleDetailMetaData.
+* @param {string} deltaKey The key for the page delta data on the server.
+* @export
+*/
+function initDetailPageMetaData(deltaKey) {
+  goog.net.XhrIo.send('/results/metadata?page_delta_key=' + deltaKey,
+                      goog.bind(detailPageClient.handleDetailMetaData,
+                                detailPageClient), 'GET');
+}
+
 
 /**
  * Kicks off the element overlay process.
@@ -494,6 +646,7 @@ bots.dashboard.DetailPage.prototype.saveOverlayResponse_ = function(
     overlayLink.innerHTML = 'Loading (' +
         (Math.floor(100 * currentCount / expectedCount)) + '%)';
   }
+
 };
 
 
@@ -683,20 +836,23 @@ bots.dashboard.DetailPage.prototype.parseXPath = function(xPathObj) {
 
 
 /**
- * Fetches the detail page data and sends it to the detail page client.
- * @param {string} deltaKey The key for the page delta data on the server.
- * @export
- */
+* Fetches the detail page meta data which will be handled by handleDetailData.
+* @param {string} deltaKey The key for the page delta data on the server.
+* @export
+*/
 function initDetailPageData(deltaKey) {
+  initDetailPageMetaData(deltaKey);
   goog.net.XhrIo.send('/results/details?page_delta_key=' + deltaKey,
-      goog.bind(detailPageClient.handleDetailData, detailPageClient), 'GET');
+                      goog.bind(detailPageClient.handleDetailData,
+                                detailPageClient), 'GET');
 }
+
 
 var urlParams = goog.Uri.parse(window.location.toString());
 var detailPageClient = new bots.dashboard.DetailPage();
 
 // Queue up getting the detail page data from the server.
-goog.Timer.callOnce(goog.bind(
-    initDetailPageData, undefined,
-    urlParams.getQueryData().get('page_delta_key')), 0);
+goog.Timer.callOnce(
+    goog.bind(initDetailPageData, undefined,
+              urlParams.getQueryData().get('page_delta_key')), 0);
 

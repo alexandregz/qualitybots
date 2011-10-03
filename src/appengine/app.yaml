@@ -145,6 +145,10 @@ handlers:
 - url: /results/details
   script: handlers/handle_result_details.py
 
+# Results detail page metadata handler.
+- url: /results/metadata
+  script: handlers/handle_result_details.py
+
 # Static file handler.
 - url: /s
   static_dir: static

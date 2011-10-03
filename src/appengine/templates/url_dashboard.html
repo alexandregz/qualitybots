@@ -7,23 +7,16 @@
   <script type="text/javascript" src="/js/url_dashboard_script.js"></script>
 </head>
 <body>
-  <div class="headerContainer">
-    <img src="/s/qualitybotslogo.png" class="headerLogo"
-         alt="QualityBots" />
-    <div class="headerButton overviewButton">Overview</div>
-    <div class="headerButton runsButton">Runs</div>
-    <div class="headerButton resultsButtonSelected">Results</div>
-    <div class="userWelcome">{{email}}'s QualityBots Tests</div>
-    <div class="dashboardDivider"></div>
+<div class="headerContainer">
+  <img src="/s/qualitybotslogo.png" class="headerLogo"
+       alt="QualityBots" />
+  <a class="headerLink" href="/url/dashboard">
+    <div class="headerButtonSelected dashboardButton">Dashboard</div>
+  </a>
+  <div class="userWelcome">{{email}} |
+    <a href="{{logout_url}}">Log Out</a>
   </div>
-
-  <div class="statusPaneContainer">
-  <div class="nextRunTitle">Next Run</div>
-  <div class="countdown" id="nextRunCountdown">--:--:--:--</div>
-  <!-- Currently mocked, we need to update this real data later -->
-  <div class="nextRunDate">Sept 26, 2011 8:00pm EST</div>
-  <div class="alertsTitle">Alerts</div>
-  <div class="alertsUsername">+ {{email}}</div>
+  <div class="dashboardDivider"></div>
 </div>
 
 <div id="layoutLegendContainer" class="legendContainer">
@@ -82,19 +75,11 @@
      <div id="urlList"></div>
      <div class="inputContainer">
        <input id="urlInput" type="text" value="http://..." class="urlInput" />
+       <div id="urlSubmit" class="urlSubmitBox">
+         <div class="urlSubmitArrow">
+         </div>
+       </div>
      </div>
-     <div class="addUrlContainer">
-       <span id="urlSubmit" class="addUrlLink">+ Add another URL</span>
-     </div>
-    </div>
-  </div>
-  <div class="notificationContainer">
-    <div class="notificationMessage">
-      QualityBots tests compares the layout of web pages across multiple
-      browser versions.
-    </div>
-    <div class="notificationClose">
-      X
     </div>
   </div>
 </div>

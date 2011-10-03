@@ -88,6 +88,20 @@ bots.dashboard.Constants.DELTA_URL = '/delta/list';
 
 
 /**
+ * The url stub for retrieving results for a url.
+ * @type {string}
+ */
+bots.dashboard.Constants.RESULT_URL = '/results';
+
+
+/**
+ * The key parameter for retrieving a url's results.
+ * @type {string}
+ */
+bots.dashboard.Constants.RESULT_URL_KEY_PARAM = 'url_key';
+
+
+/**
  * The url stub for retrieving delta diffs.
  * @type {string}
  */

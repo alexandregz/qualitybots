@@ -194,10 +194,8 @@ def GetSuiteResults(suite_key, include_ignore=False):
   pd_results = []
 
   try:
-    if include_ignore:
-      q = suite.results
-    else:
-      q = suite.results
+    q = suite.results
+    if not include_ignore:
       q = suite.results.filter('ignore =', False)
   except AttributeError:
     logging.exception('Could not get the "results" attribute.')

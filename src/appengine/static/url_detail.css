@@ -35,45 +35,44 @@ div.headerButton {
   padding-top: 9px;
   position: relative;
   text-align: center;
-  width: 84px;
+  width: 94px;
 }
 
-div.overviewButton {
+div.dashboardButton {
+  position: absolute;
   border-radius: 4px 0px 0px 4px;
-  left: 186px;
-  top: -39px;
+  left: 130px;
+  top: 5px;
 }
 
-div.runsButton {
-  left: 271px;
-  top: -77px;
+a.headerLink {
+  text-decoration: none;
 }
 
 div.resultsButton {
-  left: 356px;
-  top: -115px;
+  position: absolute;
+  left: 225px;
+  top: 5px;
 }
 
-div.resultsButtonSelected {
+div.headerButtonSelected {
   background-color: #e1e1e1;
   border: 1px solid #aaa;
   color: #444;
   height: 27px;
-  left: 356px;
   padding-top: 9px;
-  position: relative;
   text-align: center;
-  top: -115px;
-  width: 84px;
+  width: 94px;
 }
 
 div.userWelcome {
   color: black;
   height: 28px;
-  left: 463px;
+  right: 130px;
   padding-top: 10px;
-  position: relative;
-  top: -156px;
+  position: absolute;
+  text-align: right;
+  top: 3px;
 }
 
 div.dashboardDivider {
@@ -81,7 +80,7 @@ div.dashboardDivider {
   height: 3px;
   left: 0px;
   position: relative;
-  top: -148px;
+  top: 5px;
 }
 
 div.scorePane {
@@ -158,31 +157,12 @@ div.differingElements {
   width: 300px;
 }
 
-div.previewLabel {
-  color: #999;
-  font-size: 14pt;
-  padding-left: 12px;
-  padding-top: 137px;
-  position: absolute;
-}
-
-span.previewTitle {
-  font-weight: bold
-}
-
-img.screenshotPreview {
-  height: 150px;
-  padding-left: 12px;
-  padding-top: 170px;
-  position:absolute;
-}
-
 div.channelTitle {
   color: #999;
   font-size: 16pt;
   font-weight: bold;
   padding-left: 12px;
-  padding-top: 347px;
+  padding-top: 147px;
   position: absolute;
 }
 
@@ -223,25 +203,6 @@ span.lowScore {
   color: rgb(255, 20, 20);
 }
 
-div.notesTitle {
-  position: absolute;
-  color: #999;
-  font-size: 16pt;
-  padding-left: 12px;
-  padding-top: 37px;
-  font-weight: bold;
-}
-
-div.notesLink {
-  position: absolute;
-  color: #bbb;
-  font-size: 16pt;
-  padding-top: 70px;
-  width: 100%;
-  text-align: center;
-  cursor: pointer;
-}
-
 div.layoutDescription {
   color: #888;
   font-size: 14pt;
@@ -259,7 +220,7 @@ img.testBrowserScreenshot {
 }
 
 table.browserTable {
-  margin-top: 383px;
+  margin-top: 183px;
   width: 103%;
 }
 
@@ -374,3 +335,4 @@ div.elementData {
   padding-left: 10px
   padding-top: 8px;
 }
+

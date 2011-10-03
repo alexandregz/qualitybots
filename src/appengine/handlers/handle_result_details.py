@@ -40,11 +40,12 @@ from models import url_config
 
 
 GET_RESULTS_DETAILS = '/results/details'
+GET_RESULTS_METADATA = '/results/metadata'
 MEMCACHE_EXP_TIME_IN_SEC = 15*60
 
 
 class GetPageDeltaDetails(base.BaseHandler):
-  """Handler to get the results (page delta) for a given url_key.
+  """Handler to get the results (page delta) for a given page_delta_key.
 
   URL Params:
     page_delta_key: Existing PageDelta Key (Required).
@@ -156,8 +157,57 @@ class GetPageDeltaDetails(base.BaseHandler):
     return
 
 
+class GetResultsMetadata(base.BaseHandler):
+  """Handler to get the result details for a given page_delta_key.
+
+  URL Params:
+    page_delta_key: Existing PageDelta Key (Required).
+    bots_user_key: Existing bots_user_key (optional)
+
+  Returns:
+    Metadata that has info about other similar runs using given page delta key.
+  """
+
+  # Disable 'Invalid method name' lint error.
+  # pylint: disable-msg=C6409
+  def get(self):
+    """Gets the metadata for a requested PageDelta."""
+    # Let's check to see if user is logged in, else return error message.
+    user = users.get_current_user()
+    if not user:
+      result = {'status': 'error', 'message': 'User not signed-in.'}
+      self.response.out.write(simplejson.dumps(result))
+      return
+
+    # Let's get all the request parameters.
+    existing_page_delta_key = self.GetRequiredParameter('page_delta_key')
+    bots_user_key = self.GetOptionalParameter('bots_user_key', None)
+
+    # Let's retrieve bots_user details if not supplied with request.
+    if not bots_user_key:
+      existing_bots_user = bots_user.GetBotsUser(user)
+    else:
+      existing_bots_user = db.get(db.Key(bots_user_key))
+    # If user was not found, return error message.
+    if not existing_bots_user:
+      result = {'status': 'error', 'message': 'User not found.'}
+      self.response.out.write(simplejson.dumps(result))
+      return
+    bots_user_key = str(existing_bots_user.key())
+    existing_page_delta = db.get(db.Key(existing_page_delta_key))
+    if not existing_page_delta:
+      result = {'status': 'error', 'message': 'No Matching Data found.'}
+      self.response.out.write(simplejson.dumps(result))
+      return
+    existing_url_key = existing_page_delta.site.config.url.key()
+    self.redirect('/results?url_key=%s&bots_user_key=%s'
+                  % (str(existing_url_key), bots_user_key))
+    return
+
+
 application = webapp.WSGIApplication(
-    [(GET_RESULTS_DETAILS, GetPageDeltaDetails)],
+    [(GET_RESULTS_DETAILS, GetPageDeltaDetails),
+     (GET_RESULTS_METADATA, GetResultsMetadata)],
     debug=True)
 
 

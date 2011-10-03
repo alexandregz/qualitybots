@@ -9,10 +9,13 @@
 <div class="headerContainer">
   <img src="/s/qualitybotslogo.png" class="headerLogo"
        alt="QualityBots" />
-  <div class="headerButton overviewButton">Overview</div>
-  <div class="headerButton runsButton">Runs</div>
-  <div class="headerButton resultsButtonSelected">Results</div>
-  <div class="userWelcome">{{email}}'s QualityBots Tests</div>
+  <a class="headerLink" href="/url/dashboard">
+    <div class="headerButton dashboardButton">Dashboard</div>
+  </a>
+  <div class="headerButtonSelected resultsButton">Results</div>
+  <div class="userWelcome">{{email}} |
+    <a href="{{logout_url}}">Log Out</a>
+  </div>
   <div class="dashboardDivider"></div>
 </div>
 
@@ -24,13 +27,6 @@
   <div class="elementsDivider"></div>
   <div id="matchedElements" class="matchedElements">... matched</div>
   <div id="differingElements" class="differingElements">... need investigation</div>
-  <div class="previewLabel">
-     <span class="previewTitle">Preview</span>
-     (drag to pan)
-  </div>
-  <img id="testThumbnail"
-       src="/s/blank.png" class="screenshotPreview"
-       alt="Thumbnail of a screenshot of browser under test" />
   <div class="channelTitle">Chrome Channels</div>
   <table class="browserTable" cellspacing="0"
          summary="Scores for this url on other browser channels.">
@@ -39,48 +35,13 @@
         <span class="baseLabel">BASE</span>
       </td>
       <td style="width: 110px">
-         <span class="versionTitle refVersionTitle">Release</span>
+         <span class="versionTitle refVersionTitle">Stable</span>
       </td>
       <td style="width: 100px">
-         <span class="versionNumber">14.0.835.0</span>
-      </td>
-    </tr>
-    <tr class="selectedBrowserRow">
-      <td class="browserScore">
-        <span class="highScore">98</span>
-      </td>
-      <td class="browserName">
-        <span class="versionTitle">Stable</span>
-      </td>
-      <td class="browserVersion">
-        <span class="versionNumber">15.0.874.15</span>
-      </td>
-    </tr>
-    <tr class="browserRow">
-      <td class="browserScore">
-        <span class="midScore">65</span>
-      </td>
-      <td class="browserName">
-        <span class="versionTitle">Canary</span>
-      </td>
-      <td class="browserVersion">
-        <span class="versionNumber">16.0.883.0</span>
-      </td>
-    </tr>
-    <tr class="browserRow">
-      <td class="browserScore">
-        <span class="lowScore">48</span>
-      </td>
-      <td class="browserName">
-        <span class="versionTitle">Developer</span>
-      </td>
-      <td class="browserVersion">
-        <span class="versionNumber">12.0.802.1</span>
+         <span class="versionNumber"></span>
       </td>
     </tr>
   </table>
-  <div class="notesTitle">Notes</div>
-  <div class="notesLink">click to add notes</div>
 </div>
 
 <div class="layoutDescription">

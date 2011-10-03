@@ -144,7 +144,9 @@ bots.dashboard.UrlManager.URL_CONTAINER_ID = 'urlList';
  * @export
  */
 bots.dashboard.UrlManager.getScoreIcon = function(score) {
-  if (score < 50) {
+  if (score < 0) {
+    return '/s/rating-nodata.png';
+  } else if (score < 50) {
     return '/s/rating-poor.png';
   } else if (score < 90) {
     return '/s/rating-fair.png';
@@ -207,6 +209,7 @@ bots.dashboard.UrlManager.prototype.updateUrlContainers_ = function() {
     goog.style.setStyle(addUrlLink, 'innerHTML',
         'No additional URL\'s may be added.');
   }
+
 };
 
 
@@ -303,7 +306,7 @@ bots.dashboard.UrlManager.prototype.handleSendResponse_ = function(
     // them to the user, otherwise update the page with the new url.
     if (json_response['matching_urls'] != undefined) {
       this.popupClient_.openUrlSelection(
-          'urlInput', 'This URL may be one we already crawl:',
+          'urlInput', 'This URL may already have results available',
           url, json_response['matching_urls'],
           goog.bind(this.addInterestedUrl, this),
           goog.bind(this.addUrl, this));
@@ -417,6 +420,7 @@ bots.dashboard.UrlManager.prototype.addUrlToDashboard_ = function(
         {'url': url, 'key': key, 'element': newUrlContainer});
   }
   this.updateUrlContainers_();
+  this.getAndDisplayScore_(url, key);
 };
 
 
@@ -513,6 +517,13 @@ bots.dashboard.UrlManager.prototype.scoreHandler_ = function(url, response) {
           json_response['result_deltas'][i]['score'],
           json_response['result_deltas'][i]['page_delta_key']);
     }
+  } else {
+    // If no results were found, populate no data for each browser channel.
+    for (var j = 0; j < bots.dashboard.Constants.BROWSERS_UNDER_TEST.length;
+         j++) {
+      this.addUrlScore(url,
+          bots.dashboard.Constants.BROWSERS_UNDER_TEST[j].id, -1, '');
+    }
   }
 };
 
@@ -529,13 +540,7 @@ bots.dashboard.UrlManager.prototype.addUrlScore = function(
     url, browser, score, resultKey) {
   var scoreCell = goog.dom.getElement('browser' + url + browser);
   if (scoreCell) {
-    var scoreImg = goog.dom.createDom(goog.dom.TagName.IMG, {
-        'src': bots.dashboard.UrlManager.getScoreIcon(score),
-        'style': 'cursor: pointer'});
-    goog.dom.removeChildren(scoreCell);
-    goog.dom.appendChild(scoreCell, scoreImg);
-    goog.events.listen(scoreImg, goog.events.EventType.CLICK,
-                       goog.bind(this.openDetailPage_, this, resultKey));
+    this.addUrlScoreIcon_(scoreCell, score, resultKey);
   }
 };
 
@@ -554,21 +559,41 @@ bots.dashboard.UrlManager.prototype.clearUrlScores_ = function() {
       var scoreCell = goog.dom.getElement('browser' + this.urls_[i]['url'] +
           bots.dashboard.Constants.BROWSERS_UNDER_TEST[k].id);
 
-      var noScoreImg = goog.dom.createElement(goog.dom.TagName.IMG);
-      goog.dom.setProperties(noScoreImg, {'src': '/s/rating-nodata.png'});
-      goog.dom.removeChildren(scoreCell);
-      goog.dom.appendChild(scoreCell, noScoreImg);
-
-    // TODO(user): Remove the style definitions here and just use
-    // absolute positioning so this isn't neccessary.
-      goog.style.setStyle(scoreCell, 'padding-left', '15px');
+      // Add a blank score.
+      this.addUrlScoreIcon_(scoreCell, -1);
     }
-
-    // TODO(user): Remove the style definitions here and just use
-    // absolute positioning so this isn't neccessary.
-    var urlColumn = goog.dom.getElementByClass('scoresURL', urlObj);
-    goog.style.setStyle(urlColumn, 'padding-left', '30px');
   }
+};
+
+
+/**
+ * Adds the score icon to a specified element.
+ * @param {Element} scoreElement The element containing the score.
+ * @param {number} score The diff score.
+ * @param {?string} opt_resultKey The key to the page/browsers results.
+ * @private
+ */
+bots.dashboard.UrlManager.prototype.addUrlScoreIcon_ = function(
+    scoreElement, score, opt_resultKey) {
+  var scoreImg = goog.dom.createDom(goog.dom.TagName.IMG, {
+      'src': bots.dashboard.UrlManager.getScoreIcon(score),
+      'style': 'cursor: pointer'});
+  goog.dom.removeChildren(scoreElement);
+  goog.dom.appendChild(scoreElement, scoreImg);
+
+  // If a valid score was reported then add a listener to lead to the
+  // drill down page.
+  if (score >= 0 && opt_resultKey) {
+    goog.events.listen(scoreImg, goog.events.EventType.CLICK,
+                       goog.bind(this.openDetailPage_, this, opt_resultKey));
+  }
+
+  // TODO(user): Remove the style definitions here and just use
+  // absolute positioning so this isn't neccessary.
+  goog.style.setStyle(scoreElement, 'padding-left', '15px');
+  var urlColumn = goog.dom.getElementByClass('scoresURL',
+                                             scoreElement.parentElement);
+  goog.style.setStyle(urlColumn, 'padding-left', '30px');
 };
 
 
@@ -592,8 +617,24 @@ bots.dashboard.UrlManager.prototype.getAndDisplayScores = function() {
   this.initScoresUI_();
   for (var i = 0; i < this.urls_.length; i++) {
     var key = this.urls_[i]['key'];
-    goog.net.XhrIo.send('/results?url_key=' + key,
+    goog.net.XhrIo.send(
+        bots.dashboard.Constants.RESULT_URL + '?' +
+        bots.dashboard.Constants.RESULT_URL_KEY_PARAM + '=' + key,
         goog.bind(this.scoreHandler_, this, this.urls_[i]['url']), 'GET');
   }
+};
+
+
+/**
+ * Fetches a single score from the server and displays it on the dashboard.
+ * @param {string} url The url to retrieve scores for.
+ * @param {string} key The corresponding key of the url to fetch scores for.
+ * @private
+ */
+bots.dashboard.UrlManager.prototype.getAndDisplayScore_ = function(url, key) {
+  goog.net.XhrIo.send(
+      bots.dashboard.Constants.RESULT_URL + '?' +
+      bots.dashboard.Constants.RESULT_URL_KEY_PARAM + '=' + key,
+      goog.bind(this.scoreHandler_, this, url), 'GET');
 };
 
