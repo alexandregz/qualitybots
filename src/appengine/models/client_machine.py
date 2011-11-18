@@ -54,8 +54,8 @@ class ClientMachine(db.Model):
     retry_count: An integer representing the current retry number
     token: a string representing the token used by the instance to request test
       cases.
-    download_info: A string representing the information necessary for
-      calculating the version and browser download url for the given machine.
+    installer_url: A string representing the url to use to download the
+      browser on the client machine.
   """
   creation_time = db.DateTimeProperty(auto_now_add=True)
   updated_time = db.DateTimeProperty(auto_now=True)
@@ -69,7 +69,7 @@ class ClientMachine(db.Model):
   run_log = db.TextProperty()
   retry_count = db.IntegerProperty(default=0)
   token = db.StringProperty()
-  download_info = db.TextProperty()
+  installer_url = db.TextProperty()
 
 
 def GetClientMachineFromInstanceId(instance_id):

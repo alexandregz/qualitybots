@@ -56,12 +56,15 @@ DEFAULT_QUEUE = 'ec2'
 # A boolean to determine whether instances should be terminated or stopped.
 TERMINATE_INSTANCES = False
 
+# Inverse defined in testing.chronos.appcompat.appengine.models.browser.py.
+BROWSER_TO_USER_DATA = {enum.BROWSER.CHROME: 'chrome',
+                        enum.BROWSER.FIREFOX: 'firefox'}
 OS_TO_USER_DATA = {enum.OS.WINDOWS: 'win', enum.OS.LINUX: 'linux',
                    enum.OS.MAC: 'mac'}
 
 
 def CreateRunLogEntries(offset, limit, token, client_info, creation_time,
-                        browsers, browser_versions, operating_systems, user):
+                        configurations, user):
   """Create RunLog entries for the given parameters and Url selection.
 
   Args:
@@ -72,17 +75,21 @@ def CreateRunLogEntries(offset, limit, token, client_info, creation_time,
     client_info: A string representing client info for this run.
     creation_time: A datetime.datetime object representing the creation time
       for this run.
-    browsers: A list of integers that correspond to enum.BROWSER values.
-    browser_versions: A list of strings representing browser versions to use.
-    operating_systems: A list of integers that correspond to enum.OS values.
+    configurations: A list of configurations, which are objects containing
+      the following keys:
+          browser: A value that correspond to enum.BROWSER values. (integer)
+          channel: The browser channel name. (string)
+          installer_url: The installer url for the browser channel on the
+              specific os. (string)
+          os: A value that correspond to enum.OS values. (integer)
+          versions: The browser version. (string)
     user: A User object representing the user starting the test run.
   """
   logging.info('\n'.join(['offset: %d', 'limit: %d', 'token: %s',
                           'client_info: %s', 'creation_time: %s',
-                          'browsers: %s', 'browser_versions: %s',
-                          'operating_systems: %s', 'user: %s']),
-               offset, limit, token, client_info, creation_time, browsers,
-               browser_versions, operating_systems, user)
+                          'configurations: %s', 'user: %s']),
+               offset, limit, token, client_info, creation_time,
+               configurations, user)
 
   # Get the URLs to create RunLog entries.
   query = db.Query(url.Url)
@@ -95,15 +102,15 @@ def CreateRunLogEntries(offset, limit, token, client_info, creation_time,
     configs = gql_util.FetchEntities(test_url.urlconfigs,
                                      URL_CONFIG_FETCH_COUNT)
     for config in configs:
-      for system in operating_systems:
-        for browser in browsers:
-          for version in browser_versions:
-            run_logs.append(run_log.RunLog(
-                url=test_url.url, config=config.key(), token=token,
-                client_info=client_info, creation_time=creation_time,
-                status=enum.CASE_STATUS.QUEUED, user=user, browser=browser,
-                browser_version=version, os=system, priority=DEFAULT_PRIORITY,
-                retry_count=DEFAULT_RETRY_COUNT))
+      for configuration in configurations:
+        run_logs.append(run_log.RunLog(
+            url=test_url.url, config=config.key(), token=token,
+            client_info=client_info, creation_time=creation_time,
+            status=enum.CASE_STATUS.QUEUED, user=user,
+            browser=configuration['browser'],
+            browser_version=configuration['version'],
+            os=configuration['os'], priority=DEFAULT_PRIORITY,
+            retry_count=DEFAULT_RETRY_COUNT))
 
   logging.info('Num run_logs: %d', len(run_logs))
 
@@ -112,7 +119,7 @@ def CreateRunLogEntries(offset, limit, token, client_info, creation_time,
 
 
 def CreateMachines(num_instances, token, os, browser, browser_version,
-                   download_info, retries=0):
+                   installer_url, retries=0):
   """Create and launch EC2 machines for the given parameters.
 
   Args:
@@ -122,9 +129,9 @@ def CreateMachines(num_instances, token, os, browser, browser_version,
     os: An integer that corresponds to an enum.OS value.
     browser: An integer that corresponds to an enum.BROWSER value.
     browser_version: A string representing browser version to use.
-      Specifically, this should be the channel for Chrome.
-    download_info: A string representing the information necessary for
-      calculating the version and browser download url for the given machine.
+      Specifically, this should be the channel for Chrome or Firefox.
+    installer_url: A string representing the url to use to download the
+      browser on the client machine.
     retries: An optional paramater specifying the initial retry count for the
       machine.
   """
@@ -134,9 +141,12 @@ def CreateMachines(num_instances, token, os, browser, browser_version,
 
   ec2 = ec2_manager.EC2Manager()
   user_data = simplejson.dumps({'channel': browser_version,
+                                'browser': BROWSER_TO_USER_DATA[browser],
+                                # TODO(user): Used by anyone?  No
+                                # longer used by client_setup.instance_manager.
                                 'os': OS_TO_USER_DATA[os],
                                 'token': token,
-                                'download_info': download_info})
+                                'installer_url': installer_url})
   logging.info('Spawning EC2 machines.')
   # Note: All exceptions are caught here because the EC2 API could fail after
   # successfully starting a machine. Because this task is rescheduled on
@@ -157,7 +167,7 @@ def CreateMachines(num_instances, token, os, browser, browser_version,
         vm_service=enum.VM_SERVICE.EC2, os=os, browser=browser,
         browser_version=browser_version, client_id=instance.inst_id,
         status=enum.MACHINE_STATUS.PROVISIONED, retry_count=retries,
-        token=token, download_info=download_info))
+        token=token, installer_url=installer_url))
 
   db.put(new_instances)
   logging.info('Finished creating the ClientMachine models.')

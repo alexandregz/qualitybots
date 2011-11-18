@@ -130,7 +130,8 @@ def GetOrInsertBrowser(user_agent, channel=None, flag=None):
     # Channel is not present, then let's try to identify.
     if not channel:
       if os_family:
-        channel = chrome_channel_util.IdentifyChannel(
+        channel_util = chrome_channel_util.ChromeChannelUtil()
+        channel = channel_util.IdentifyChannel(
             enum.OS.LookupKey(os_family), browser_version)
         logging.info('Identified Channel as %s', channel)
         channel = CHANNEL_MAPPING[channel]

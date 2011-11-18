@@ -39,6 +39,7 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from common import chrome_channel_util
 from common import ec2_manager
 from common import enum
+from common import firefox_channel_util
 from handlers import base
 from handlers import launch_tasks
 from models import client_machine
@@ -67,14 +68,16 @@ MILLISECONDS_PER_SECOND = 1000
 MICROSECONDS_PER_MILLISECOND = 1000
 MILLISECONDS_PER_DAY = 24 * 60 * 60 * MILLISECONDS_PER_SECOND
 
-BROWSERS = [enum.BROWSER.CHROME]
+BROWSERS = [enum.BROWSER.CHROME, enum.BROWSER.FIREFOX]
 # Browser versions are ordered from oldest to newest.
 BROWSER_VERSIONS_MAP = {
     enum.BROWSER.CHROME: [
         enum.BROWSERCHANNEL.LookupKey(enum.BROWSERCHANNEL.STABLE).lower(),
         enum.BROWSERCHANNEL.LookupKey(enum.BROWSERCHANNEL.BETA).lower(),
-        enum.BROWSERCHANNEL.LookupKey(enum.BROWSERCHANNEL.DEV).lower(),
-        enum.BROWSERCHANNEL.LookupKey(enum.BROWSERCHANNEL.CANARY).lower()]}
+        enum.BROWSERCHANNEL.LookupKey(enum.BROWSERCHANNEL.DEV).lower()],
+    enum.BROWSER.FIREFOX: [
+        enum.BROWSERCHANNEL.LookupKey(enum.BROWSERCHANNEL.STABLE).lower(),
+        enum.BROWSERCHANNEL.LookupKey(enum.BROWSERCHANNEL.AURORA).lower()]}
 OPERATING_SYSTEMS = [enum.OS.WINDOWS]
 
 CLIENT_INFO_JSON = ('{"height": "512", "Project": "AppCompat", '
@@ -158,50 +161,85 @@ class StartTestRun(base.BaseHandler):
     # Create a unique token per test run based on a random uuid.
     token = str(uuid.uuid4())
     creation_time = datetime.datetime.now()
+
+    # TODO(user): Convert this code to loop through all browsers and
+    # operating systems and build a list of configurtions based on supported
+    # values rather than a complete combinatoric approach.
     operating_systems = OPERATING_SYSTEMS
     browsers = BROWSERS
 
-    # Get the channels and versions for the browsers (works with Chrome).
-    # Browser channels and versions are ordered from oldest to newest.
-    logging.info('Look up the browser version info')
-    browser_channels = []
-    for browser in browsers:
-      browser_channels.extend(BROWSER_VERSIONS_MAP[browser])
+    chrome_util = chrome_channel_util.ChromeChannelUtil()
+    firefox_util = firefox_channel_util.ChromeChannelUtil()
 
-    browser_versions = []
-    for system in operating_systems:
-      for channel in browser_channels:
-        browser_versions.append(chrome_channel_util.GetVersionForChannel(
-            enum.OS.LookupKey(system).lower(), channel))
+    # Create a list of configurations based on os, browser, and channel that
+    # includes version and installer url.
+    configurations = []
+    for system in operating_system:
+      for browser in browsers:
+        for channel in BROWSER_VERSIONS_MAP[browser]
+          configuration = {'os': system, 'browser': browser,
+                           'channel': channel}
+          system_name = enum.OS.LookupKey(system).lower()
+
+          if browser == enum.BROWSER.CHROME:
+            configuration['version'] = chrome_util.GetVersionForChannel(
+                system_name, channel)
+            configuration['installer_url'] = chrome_util.GetUrlForChannel(
+                system_name, channel)
+
+          elif browser == enum.BROWSER.FIREFOX:
+            configuration['version'] = firefox_util.GetVersionForChannel(
+                system_name, channel)
+            configuration['installer_url'] = firefox_util.GetUrlForChannel(
+                system, channel)
+          else
+            logging.error('Unknown system (%s), browser (%s), channel (%s) '
+                          'configuration ... skipping.', system, browser,
+                          channel)
+            continue
+
+          configurations.append(configuration)
+
+    ref_os = enum.OS.LookupKey(operating_system[0]).lower()
+    ref_browser = browsers[0]
+    ref_channel = BROWSER_VERSION_MAP[ref_browser][0]
+    ref_configuration = None
+    for configuration in configurations:
+      if (configuration['os'] == ref_os and
+          configuration['browser'] == ref_browser and
+          configuration['channel'] = ref_channel):
+        ref_configuration = configuration
+        break
+
+    if ref_configuration is None:
+      logging.error('Unable to locate reference browser')
+      self.response.out.write('Test run failed.')
+      return
 
     # Add the reference browser to the config params
     client_info = StartTestRun._CreateClientInfoString(
-        CLIENT_INFO_JSON, browser_versions[0], browser_channels[0])
+        CLIENT_INFO_JSON, ref_configuration['version'],
+        ref_configuration['channel'])
 
     num_instances = StartTestRun.CalculateNeededMachines(num_urls)
-
-    # Get the download info string.
-    download_info = chrome_channel_util.GetDownloadInfo()
 
     # Push tasks onto the queue to create the RunLog entries.
     limit = 200
     offset = 0
     while offset < num_urls:
       deferred.defer(launch_tasks.CreateRunLogEntries, offset, limit,
-                     token, client_info, creation_time, browsers,
-                     browser_versions, operating_systems, user,
+                     token, client_info, creation_time, configurations, user,
                      _countdown=launch_tasks.DEFAULT_COUNTDOWN,
                      _queue=launch_tasks.DEFAULT_QUEUE)
       offset += limit
 
     # Push tasks onto the queue to create the necessary machines.
-    for os in operating_systems:
-      for browser in browsers:
-        for channel in browser_channels:
-          deferred.defer(launch_tasks.CreateMachines, num_instances,
-                         token, os, browser, channel, download_info,
-                         _countdown=launch_tasks.DEFAULT_COUNTDOWN,
-                         _queue=launch_tasks.DEFAULT_QUEUE)
+    for configuration in configurations:
+      deferred.defer(launch_tasks.CreateMachines, num_instances,
+                     token, configuration['os'], configuration['browser'],
+                     configuration['channel', configuration['installer_url'],
+                     _countdown=launch_tasks.DEFAULT_COUNTDOWN,
+                     _queue=launch_tasks.DEFAULT_QUEUE)
 
     self.response.out.write('Test run started.')
 

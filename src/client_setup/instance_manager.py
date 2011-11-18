@@ -25,140 +25,121 @@ import urllib
 import urllib2
 import zlib
 
-import chrome_manager
+import browser_manager
 import mylogger
+import url_helper
 
-logger = mylogger.InitLogging('Bots', True, True)
-
-SERVER = 'http://YOUR_APPENGINE_SERVER_HERE'
+_SERVER = 'http://YOUR_APPENGINE_SERVER_HERE'
 
 # Communication paths
-START = '/init/start'
-INSTALL_FAILED = '/init/install_failed'
-INSTALL_SUCCEEDED = '/init/install_succeeded'
-INSTANCE_ID_URL = 'http://169.254.169.254/latest/meta-data/instance-id'
-USER_DATA_URL = 'http://169.254.169.254/latest/user-data'
+_START = '/init/start'
+_INSTALL_FAILED = '/init/install_failed'
+_INSTALL_SUCCEEDED = '/init/install_succeeded'
+_INSTANCE_ID_URL = 'http://169.254.169.254/latest/meta-data/instance-id'
+_USER_DATA_URL = 'http://169.254.169.254/latest/user-data'
+
+_logger = mylogger.InitLogging('InstanceManager', True, True)
 
 
 def Start(server):
-  """Function run when instance is up and bots scripts run.
+  """Function runs when an instance is spun up.
 
   The following process outlines the flow of the function:
-      1. Begin by requesting the EC2 specific information from the internal
-         Amazon server. Then, send a request to the bots server indicating
-         that this instance is starting initialization. The browser OS and
-         channel information is available from the EC2 user data.
-      2. Install specified browser
-      3. Send request to the bots server saying the browser was installed; or
+      1. Begin by requesting EC2 specific information from the internal
+         Amazon server.
+      2. Request run specific information such as the browser and channel
+         available from the EC2 user data.
+      3. Send a request to the bots server indicating that this instance is
+         starting initialization.
+      4. Install specified browser
+      5. Send request to the bots server saying the browser was installed; or
          failed if the install failed.
 
   Args:
-    server: A string representing the server url that does not terminate in a
-      slash.
+    server: The server url that does not terminate in a slash. (string)
   """
-  logger.info('Getting the instance id from the internal EC2 server.')
-  instance_id = _GetDataFromUrl(INSTANCE_ID_URL)
+  # Retrieve instance information.
+  _logger.info('Getting the instance id from the internal EC2 server.')
+  instance_id = url_helper.GetData(_INSTANCE_ID_URL)
 
   if not instance_id:
-    logger.fatal('Failed to connect to the EC2 server to get the instance id.')
+    _logger.fatal(
+        'Failed to connect to the EC2 server to get the instance id.')
     return
 
-  logger.info('Getting the user data from the internal EC2 server.')
-  user_data = _GetDataFromUrl(USER_DATA_URL)
+  _logger.info('Getting the user data from the internal EC2 server.')
+  user_data = url_helper.GetData(_USER_DATA_URL)
 
   if not user_data:
-    logger.fatal('Failed to connect to the EC2 server to get the user data.')
+    _logger.fatal('Failed to connect to the EC2 server to get the user data.')
     return
   else:
     try:
       user_data = json.loads(user_data)
     except TypeError:
-      logger.fatal('Could not load the user data.')
+      _logger.fatal('Could not load the user data.')
       return
 
-  logger.info('Notifying the server that this instance is starting setup.')
-  _GetDataFromUrl(server + START, {'instance_id': instance_id})
+  # Process browser information extracted from user_data.
+  _logger.info('Notifying the server that this instance is starting setup.')
+  url_helper.GetData(server + _START, {'instance_id': instance_id})
 
-  if 'os' not in user_data or not user_data['os']:
-    logger.fatal('User data is invalid; missing os information.')
+  if 'browser' not in user_data or not user_data['browser']:
+    _logger.fatal('User data is invalid; missing browser information.')
     return
   if 'channel' not in user_data or not user_data['channel']:
-    logger.fatal('User data is invalid; missing channel information.')
+    _logger.fatal('User data is invalid; missing channel information.')
+    return
+  if 'installer_url' not in user_data or not user_data['installer_url']:
+    _logger.fatal('User data is invalid; missing installer_url information.')
     return
 
-  download_info = ''
-  if 'download_info' in user_data and user_data['download_info']:
-    logger.info('The download information was provided.')
-    # Make sure we have a string rather than unicode.
-    download_info = str(user_data['download_info'])
-
-  # TODO(user): Consider adding a mapping from os.uname() to Omaha OS to avoid
-  #   using an OS param from user data.
-  operating_system = user_data['os']
+  browser = user_data['browser']
   channel = user_data['channel']
+  installer_url = user_data['installer_url']
 
-  result_url = INSTALL_SUCCEEDED
+  # Manage browser setup by installing the appropriate version if possible.
+  result_url = _INSTALL_SUCCEEDED
   try:
-    helper = chrome_manager.ChromeAutomationHelper()
-    helper.InstallChrome(operating_system, channel, download_info=download_info)
-  except chrome_manager.ChromeAutomationHelperException:
+    manager = browser_manager.BrowserManager(browser, channel)
+    # If machine crashed and was rebooted then check to see if the browser is
+    # already installed.  If it is then mark install as successful and return.
+    if not manager.IsInstalled():
+      if not manager.Install(installer_url):
+        result_url = INSTALL_FAILED
+  except browser_manager.NotSupported:
     result_url = INSTALL_FAILED
+
+  # Retrieve logs and let server know of the process's success.
   # Let's compress and base64 encode data before upload.
   log_data = base64.b64encode(zlib.compress(_GetLog()))
   _Post(server + result_url, instance_id, log_data)
-
-
-def _GetDataFromUrl(url, params=None):
-  """Get and return data from the given URL.
-
-  Args:
-    url: A string indicating the URL to request data from.
-    params: An optional dictionary of URL params to send with the request.
-
-  Returns:
-    A string representing the data returned from the request to the URL.
-  """
-  response = None
-
-  if params:
-    params = urllib.urlencode(params)
-  else:
-    params = ''
-
-  try:
-    # Let the server know that this instance is starting up.
-    response = urllib2.urlopen(url+'?'+params)
-    response = response.read()
-  except urllib2.URLError:
-    logger.error('Failed to connect to "%s".', url)
-
-  return response
 
 
 def _Post(url, instance_id, data):
   """Sends a request to the server.
 
   Args:
-    url: A string representing the url for the request.
-    instance_id: A string representing the EC2 instance id.
-    data: A string to send to the url as part of a POST.
+    url: The url for the request. (string)
+    instance_id: The EC2 instance id. (string)
+    data: Data to send to the url as part of a POST. (string)
   """
   try:
+    # TODO(user): Change data_to_send.log to .data and then move to
+    # url_helper.
     data_to_send = {'log': data, 'instance_id': instance_id}
     urllib2.urlopen(url, urllib.urlencode(data_to_send))
   except urllib2.URLError:
-    logger.info('Failed to connect to server during configuration.')
+    _logger.info('Failed to connect to server during configuration.')
     return
 
 
 def _GetLog():
   """Load the log file and return it as a string for upload to the server.
 
-  If the log does not exist then nothing will be sent back.
-
   Returns:
-    Returns a string form of the log.  If the log does not exist then an empty
-    string is returned.
+    Returns the log.  If the log does not exist then an empty string is
+    returned. (string)
   """
   try:
     with open('log.txt', 'r') as f:
@@ -167,8 +148,8 @@ def _GetLog():
     return ''
 
 
-if __name__ == '__main__':
-  arg = SERVER
+if _name_ == '_main_':
+  arg = _SERVER
   if len(sys.argv) > 1:
     arg = sys.argv[1]
   Start(arg)
